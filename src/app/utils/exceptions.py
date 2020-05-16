@@ -41,10 +41,47 @@ class UnknownException(APIException):
 
 
 class ContentTypeException(APIException):
-    error_code = 1001
+    error_code = -2
     message = "不支持的content-type类型"
 
 
 class ParameterException(APIException):
     error_code = 1002
     message = "参数错误"
+
+
+# -------------用户-------------
+class UserExistException(APIException):
+    error_code = 2001
+    message = "用户已存在"
+
+
+class UserNotExistException(APIException):
+    error_code = 2002
+    message = "用户不存在"
+
+
+class PasswordException(APIException):
+    error_code = 2003
+    message = "密码错误"
+
+
+class ActiveException(APIException):
+    error_code = 2004
+    message = "用户未激活"
+
+
+class AuthException(APIException):
+    error_code = 2005
+    message = "认证失败，没有找到token"
+
+
+class InvalidTokenException(APIException):
+    error_code = 2006
+    message = "token不合法"
+
+
+class ExpiredTokenException(APIException):
+    error_code = 2007
+    message = "token已过期"
+# -------------用户-------------

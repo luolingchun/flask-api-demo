@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/5 17:21
-from flask import request, Flask
+from flask import request
 from wtforms import Form
 
 from app.utils.exceptions import ContentTypeException, ParameterException
@@ -10,6 +10,8 @@ from app.utils.exceptions import ContentTypeException, ParameterException
 class BaseForm(Form):
     def __init__(self):
         content_type = request.content_type
+        if content_type is None:
+            raise ContentTypeException()
         if content_type == 'application/x-www-form-urlencoded':
             data = request.form.to_dict()
         elif 'multipart/form-data' in content_type:

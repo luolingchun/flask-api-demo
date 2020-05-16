@@ -17,6 +17,23 @@ def test():
     print('test')
 
 
+@manager.command
+def add_superuser():
+    from app.models.user import User
+    user = User.query.filter_by(name='super').first()
+    if user:
+        print('超级管理员已存在.')
+        return
+    with db.auto_commit():
+        user = User()
+        user.name = 'super'
+        user.password = '123456'
+        user.super = True
+        user.active = True
+        db.session.add(user)
+    print('添加超级管理员成功.')
+
+
 manager.add_command("runserver", Server(use_debugger=True))
 # 数据库迁移
 # 1. python manage.py db init
