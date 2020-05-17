@@ -84,4 +84,23 @@ class InvalidTokenException(APIException):
 class ExpiredTokenException(APIException):
     error_code = 2007
     message = "token已过期"
+
+
 # -------------用户-------------
+
+
+# -------------角色-------------
+class RoleExistException(APIException):
+    error_code = 3001
+    message = "角色已存在"
+
+
+class RoleNotExistException(APIException):
+    error_code = 3002
+    message = "角色不存在"
+
+
+class RoleHasUserException(APIException):
+    error_code = 3003
+    message = "角色下存在用户，不可删除"
+# -------------角色-------------

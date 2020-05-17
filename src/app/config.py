@@ -10,14 +10,14 @@ APP_NAME = 'XXX服务'
 # 数据库配置
 
 # sqlite
-DB_URI = 'sqlite:///../flask_api.db'
+# DB_URI = 'sqlite:///../flask_api.db'
 
 # mysql
 USER = 'root'
 PASSWORD = '123456'
 HOST = 'localhost'
 DB_NAME = 'flask_api'
-# db_uri = f'mysql+pymysql://{user}:{password}@{ip}/{db_name}?charset=utf8'
+DB_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}/{DB_NAME}?charset=utf8'
 
 SQLALCHEMY_DATABASE_URI = DB_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = False

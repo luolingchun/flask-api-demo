@@ -24,13 +24,13 @@ def add_superuser():
     if user:
         print('超级管理员已存在.')
         return
-    with db.auto_commit():
-        user = User()
-        user.name = 'super'
-        user.password = '123456'
-        user.super = True
-        user.active = True
-        db.session.add(user)
+    user = User()
+    user.name = 'super'
+    user.password = '123456'
+    user.is_admin = True
+    user.is_active = True
+    db.session.add(user)
+    db.session.commit()
     print('添加超级管理员成功.')
 
 

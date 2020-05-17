@@ -9,7 +9,7 @@ from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_us
     create_access_token, create_refresh_token
 
 from app.models.user import User
-from app.utils.exceptions import ActiveException, AuthException, InvalidTokenException, UserNotExistException, \
+from app.utils.exceptions import AuthException, InvalidTokenException, UserNotExistException, \
     ExpiredTokenException
 
 jwt = JWTManager()
@@ -18,21 +18,19 @@ identity = {
 }
 
 
-# TODO:黑名单
-
 def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         current_user = get_current_user()
         if not current_user.is_admin:
-            raise AuthFailed(msg='只有超级管理员可操作')
+            raise AuthException(message='权限不足')
         return fn(*args, **kwargs)
 
     return wrapper
 
 
-def group_required(fn):
+def role_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
@@ -60,9 +58,7 @@ def group_required(fn):
 def login_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        print(request.headers)
         verify_jwt_in_request()
-        _check_is_active(current_user=get_current_user())
         return fn(*args, **kwargs)
 
     return wrapper
@@ -127,32 +123,3 @@ def get_refresh_token(user, scope=None, expires_delta=None, verify_remote_addr=F
         expires_delta=expires_delta
     )
     return refresh_token
-
-
-def verify_access_token():
-    __verify_token('access')
-
-
-def verify_refresh_token():
-    __verify_token('refresh')
-
-
-def __verify_token(request_type):
-    from flask import request
-    from flask_jwt_extended.config import config
-    from flask_jwt_extended.view_decorators import _decode_jwt_from_cookies as decode
-    from flask_jwt_extended.utils import verify_token_claims
-    try:
-        from flask import _app_ctx_stack as ctx_stack
-    except ImportError:
-        from flask import _request_ctx_stack as ctx_stack
-
-    if request.method not in config.exempt_methods:
-        jwt_data = decode(request_type=request_type)
-        ctx_stack.top.jwt = jwt_data
-        verify_token_claims(jwt_data)
-
-
-def _check_is_active(current_user):
-    if not current_user.active:
-        raise ActiveException()

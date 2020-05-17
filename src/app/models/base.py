@@ -1,23 +1,11 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/4 17:24
-from contextlib import contextmanager
+
 from datetime import datetime
 
-from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
-from sqlalchemy import inspect, Column, Integer, orm
-
-
-class SQLAlchemy(_SQLAlchemy):
-    @contextmanager
-    def auto_commit(self):
-        try:
-            yield
-            self.session.commit()
-        except Exception as e:
-            self.session.rollback()
-            raise e
-
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer
 
 db = SQLAlchemy()
 
