@@ -4,12 +4,13 @@
 
 from flask import Blueprint
 from flasgger.utils import swag_from
+from flask_jwt_extended import get_current_user
 
 from app.models.user import User
 from app.utils.exceptions import UserExistException
 from app.utils.jwt import get_token, login_required
 from app.utils.response import response
-from app.validators.forms import RegisterForm, LoginForm
+from app.forms.user import RegisterForm, LoginForm, ModifyPasswordForm
 
 __version__ = '/v1'
 __bp__ = '/user'
@@ -41,4 +42,19 @@ def login():
 @login_required
 @swag_from('api_docs/user/get_info.yml')
 def get_info():
-    return 'test'
+    user = get_current_user()
+    data = {
+        'name': user.name,
+        'email': user.email
+    }
+    return response(0, 'ok', data)
+
+
+@api.route('password', methods=['PUT'])
+@login_required
+@swag_from('api_docs/user/modify_password.yml')
+def modify_password():
+    form = ModifyPasswordForm().validate_for_api()
+    user = get_current_user()
+    user.modify_password(form.old_password.data, form.new_password.data)
+    return response(0, 'ok')

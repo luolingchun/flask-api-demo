@@ -25,7 +25,7 @@ def init_exception(app: Flask):
         else:
             if not app.config['DEBUG']:
                 import traceback
-                app.logger.error(traceback.format_exc())
+                traceback.format_exc()
                 return UnknownException()
             else:
                 raise e
@@ -34,7 +34,9 @@ def init_exception(app: Flask):
 def register_blueprints(app: Flask):
     """注册蓝图"""
     from app.api.user import api as user_api
+    from app.api.admin import api as admin_api
     app.register_blueprint(user_api)
+    app.register_blueprint(admin_api)
 
 
 def init_jwt(app):

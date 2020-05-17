@@ -2,8 +2,8 @@
 # @Author  : llc
 # @Time    : 2020/5/4 17:11
 
-from wtforms import StringField, PasswordField, IntegerField
-from wtforms.validators import DataRequired, length, EqualTo, NumberRange, Regexp, Optional
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired, length, EqualTo, Regexp, Optional
 
 from .base import BaseForm
 
@@ -34,3 +34,8 @@ class RegisterForm(BaseForm):
 class LoginForm(BaseForm):
     name = StringField(validators=[DataRequired()])
     password = PasswordField(validators=[DataRequired()])
+
+
+class ModifyPasswordForm(BaseForm):
+    old_password = PasswordField(validators=[DataRequired(), length(min=6)])
+    new_password = PasswordField(validators=[DataRequired(), length(min=6)])
