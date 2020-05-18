@@ -2,7 +2,7 @@
 # @Author  : llc
 # @Time    : 2020/5/4 17:11
 
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, FieldList, IntegerField
 from wtforms.validators import DataRequired, length, EqualTo, Regexp, Optional
 
 from .base import BaseForm
@@ -29,6 +29,7 @@ class RegisterForm(BaseForm):
             Optional()
         ]
     )
+    role_ids = FieldList(IntegerField(validators=[DataRequired()]), default=[1])
 
 
 class LoginForm(BaseForm):

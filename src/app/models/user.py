@@ -5,8 +5,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .base import Base, db
-from ..utils.exceptions import UserNotExistException, PasswordException, ActiveException
-from ..forms.user import RegisterForm
+from app.utils.exceptions import UserNotExistException, PasswordException
+from app.forms.user import RegisterForm
 
 user_role = db.Table(
     'user_role',
@@ -14,14 +14,20 @@ user_role = db.Table(
     db.Column('role_id', db.Integer, db.ForeignKey('role.id'), primary_key=True)
 )
 
+role_auth = db.Table(
+    'role_auth',
+    db.Column('role_id', db.Integer, db.ForeignKey('role.id'), primary_key=True),
+    db.Column('auth_id', db.Integer, db.ForeignKey('auth.id'), primary_key=True)
+)
+
 
 class User(Base):
     name = db.Column(db.String(24), unique=True, nullable=False, comment='用户名')
     email = db.Column(db.String(24), unique=True, nullable=True, comment='邮箱')
     is_admin = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment='是否是超级管理员')
-    is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment='是否激活')
+    # is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment='是否激活')
     roles = db.relationship('Role', secondary=user_role, backref=db.backref('users', lazy='dynamic'), lazy='dynamic')
-    _password = db.Column('password', db.String(100))
+    _password = db.Column('password', db.String(100), comment='密码')
 
     @property
     def password(self):
@@ -38,14 +44,10 @@ class User(Base):
 
     def modify_password(self, old_password, new_password):
         if self.check_password(old_password):
-            self._password = new_password
+            self.password = new_password
             db.session.commit()
             return True
         raise PasswordException(message='原始密码错误')
-
-    @staticmethod
-    def get(name):
-        return User.query.filter_by(name=name).first()
 
     @staticmethod
     def create(form: RegisterForm):
@@ -54,8 +56,15 @@ class User(Base):
         user.password = form.password.data
         if form.email.data:
             user.email = form.email.data
+        # 添加默认角色
+        role_ids = form.role_ids.data if form.role_ids.data else [1]
+        user.roles = Role.query.filter(Role.id.in_(role_ids)).all()
         db.session.add(user)
         db.session.commit()
+
+    def data(self):
+        return {'id': self.id, 'name': self.name, 'email': self.email,
+                'roles': [role.data() for role in self.roles.all()]}
 
     @classmethod
     def verify(cls, name, password):
@@ -64,14 +73,15 @@ class User(Base):
             raise UserNotExistException()
         if not user.check_password(password):
             raise PasswordException()
-        if not user.is_active:
-            raise ActiveException()
+        # if not user.is_active:
+        #     raise ActiveException()
         return user
 
 
 class Role(Base):
     name = db.Column(db.String(24), unique=True, comment='角色名称')
     describe = db.Column(db.String(255), comment='角色描述')
+    auths = db.relationship('Auth', secondary=role_auth, backref=db.backref('roles', lazy='dynamic'), lazy='dynamic')
 
     @staticmethod
     def create(name, describe):
@@ -83,3 +93,12 @@ class Role(Base):
 
     def data(self):
         return {'id': self.id, 'name': self.name, 'describe': self.describe}
+
+
+class Auth(Base):
+    name = db.Column(db.String(24), unique=True, comment='权限名称')
+    module = db.Column(db.String(24), comment='权限模块')
+    endpoint = db.Column(db.String(24), comment='路由端点')
+
+    def data(self):
+        return {'id': self.id, 'name': self.name, 'module': self.module}

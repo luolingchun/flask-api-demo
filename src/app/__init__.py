@@ -35,8 +35,10 @@ def register_blueprints(app: Flask):
     """注册蓝图"""
     from app.api.user import api as user_api
     from app.api.admin import api as admin_api
+    from app.api.book import api as book_api
     app.register_blueprint(user_api)
     app.register_blueprint(admin_api)
+    app.register_blueprint(book_api)
 
 
 def init_jwt(app):
@@ -62,10 +64,10 @@ def create_app():
     CORS(app)
     # 初始化全局异常
     init_exception(app)
-    # 注册蓝图
-    register_blueprints(app)
     # 初始化JWT
     init_jwt(app)
     # 初始化数据库
     init_db(app)
+    # 注册蓝图
+    register_blueprints(app)
     return app

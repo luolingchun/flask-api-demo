@@ -18,20 +18,33 @@ def test():
 
 
 @manager.command
-def add_superuser():
-    from app.models.user import User
+def init_db():
+    from app.models.user import User, Auth
+    from app.utils.jwt import auths
     user = User.query.filter_by(name='super').first()
     if user:
         print('超级管理员已存在.')
-        return
-    user = User()
-    user.name = 'super'
-    user.password = '123456'
-    user.is_admin = True
-    user.is_active = True
-    db.session.add(user)
-    db.session.commit()
-    print('添加超级管理员成功.')
+    else:
+        user = User()
+        user.name = 'super'
+        user.password = '123456'
+        user.is_admin = True
+        user.is_active = True
+        db.session.add(user)
+        db.session.commit()
+        print('添加超级管理员成功.')
+
+    for name, module, endpoint in auths:
+        auth = Auth.query.filter_by(name=name).first()
+        if auth:
+            continue
+        auth = Auth()
+        auth.name = name
+        auth.module = module
+        auth.endpoint = endpoint
+        db.session.add(auth)
+        db.session.commit()
+    print('添加权限成功.')
 
 
 manager.add_command("runserver", Server(use_debugger=True))
