@@ -22,7 +22,7 @@ api = Blueprint(__bp__, __name__, url_prefix=__version__ + __bp__)
 @swag_from('api_docs/user/register.yml')
 def register():
     form = RegisterForm().validate_for_api()
-    user = User.get(name=form.name.data)
+    user = User.query.filter_by(name=form.name.data).first()
     if user:
         raise UserExistException()
     User.create(form)
@@ -35,19 +35,19 @@ def login():
     form = LoginForm().validate_for_api()
     user = User.verify(form.name.data, form.password.data)
     access_token = get_token(user)
-    return response(0, 'ok', access_token)
+    return response(0, 'ok', data=access_token)
 
 
-@api.route('/info', methods=['GET'])
-@login_required
-@swag_from('api_docs/user/get_info.yml')
-def get_info():
-    user = get_current_user()
-    data = {
-        'name': user.name,
-        'email': user.email
-    }
-    return response(0, 'ok', data)
+# @api.route('/info', methods=['GET'])
+# @login_required
+# @swag_from('api_docs/user/get_info.yml')
+# def get_info():
+#     user = get_current_user()
+#     data = {
+#         'name': user.name,
+#         'email': user.email
+#     }
+#     return response(0, 'ok', data=data)
 
 
 @api.route('password', methods=['PUT'])
