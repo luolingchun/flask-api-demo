@@ -1,0 +1,21 @@
+获取所有用户
+获取所有用户
+---
+tags:
+  - v1/admin
+parameters:
+  - name: page
+    in: args
+    type: integer
+    description: 页码
+  - name: integer
+    in: args
+    type: string
+    description: 每页个数
+responses:
+  500:
+    description: 服务端错误
+  200:
+    description: 成功
+security:
+  - api_key: []

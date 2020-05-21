@@ -11,6 +11,7 @@ app = create_app()
 
 @app.route('/')
 def index():
+    """根目录重定向到apidocs"""
     return redirect(url_for('flasgger.apidocs'))
 
 

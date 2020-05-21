@@ -42,6 +42,7 @@ def register_blueprints(app: Flask):
 
 
 def init_jwt(app):
+    """初始化JWT"""
     jwt.init_app(app)
 
 
@@ -54,7 +55,7 @@ def init_db(app: Flask):
 
 def create_app():
     from . import config
-    # 创建Flask示例
+    # 创建Flask实例
     app = Flask(__name__)
     # 配置项
     app.config.from_object(config)

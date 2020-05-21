@@ -9,26 +9,14 @@ from .base import BaseForm
 
 
 class RegisterForm(BaseForm):
-    name = StringField(
-        validators=[DataRequired(),
-                    length(min=4, max=32)
-                    ]
-    )
-    password = PasswordField(
-        validators=[DataRequired(),
-                    EqualTo('confirm_password'),
-                    length(min=6)
-                    ]
-    )
-    confirm_password = PasswordField(
-        validators=[DataRequired()]
-    )
+    name = StringField(validators=[DataRequired(), length(min=4, max=32)])
+    password = PasswordField(validators=[DataRequired(), EqualTo('confirm_password'), length(min=6)])
+    confirm_password = PasswordField(validators=[DataRequired()])
     email = StringField(
         validators=[
             Regexp(r'^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$'),
             Optional()
-        ]
-    )
+        ])
     role_ids = FieldList(IntegerField(validators=[DataRequired()]), default=[1])
 
 

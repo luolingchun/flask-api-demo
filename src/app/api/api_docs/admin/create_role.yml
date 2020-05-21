@@ -1,0 +1,22 @@
+新建角色
+新建角色
+---
+tags:
+  - v1/admin
+parameters:
+  - name: name
+    in: formData
+    type: string
+    required: true
+    description: 角色名称
+  - name: describe
+    in: formData
+    type: string
+    description: 角色描述
+responses:
+  500:
+    description: 服务端错误
+  200:
+    description: 成功
+security:
+  - api_key: []

@@ -6,21 +6,26 @@ import traceback
 from flask import request
 from wtforms import Form
 
-from app.utils.exceptions import ContentTypeException, ParameterException
+from app.utils.exceptions import ParameterException
 
 
 class BaseForm(Form):
-    def __init__(self):
+    """表单、参数验证基类"""
+
+    def __init__(self, **kwargs):
         content_type = request.content_type
         if content_type == 'application/x-www-form-urlencoded':
             data = request.form.to_dict()
-        elif content_type and 'multipart/form-data' in content_type:
+        elif 'multipart/form-data' in str(content_type):
             data = request.form.to_dict()
         elif content_type == 'application/json':
             data = request.json
         else:
             data = {}
         args = request.args.to_dict()
+        if kwargs:
+            data.update(**kwargs)
+        print(data)
         super(BaseForm, self).__init__(data=data, **args)
 
     def validate_for_api(self):

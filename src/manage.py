@@ -19,7 +19,7 @@ def test():
 
 @manager.command
 def init_db():
-    from app.models.user import User, Auth
+    from app.models.user import User, Auth, Role
     from app.utils.jwt import auths
     user = User.query.filter_by(name='super').first()
     if user:
@@ -45,6 +45,16 @@ def init_db():
         db.session.add(auth)
         db.session.commit()
     print('添加权限成功.')
+    role = Role.query.filter_by(name='普通用户').first()
+    if role:
+        print('普通用户角色已存在.')
+    else:
+        role = Role()
+        role.name = '普通用户'
+        role.describe = '默认权限组'
+        db.session.add(role)
+        db.session.commit()
+    print('添加普通用户角色成功.')
 
 
 manager.add_command("runserver", Server(use_debugger=True))
