@@ -1,0 +1,24 @@
+给角色添加权限
+给角色添加权限
+auth_ids示例：[1,2,3]
+---
+tags:
+  - v1/admin
+parameters:
+  - name: role_id
+    in: formData
+    type: integer
+    required: true
+    description: 用户id
+  - name: auth_ids
+    in: formData
+    type: string
+    required: true
+    description: 权限id列表
+responses:
+  500:
+    description: 服务端错误
+  200:
+    description: 成功
+security:
+  - api_key: []

@@ -6,7 +6,8 @@ from flask import Blueprint
 from flasgger.utils import swag_from
 from flask_jwt_extended import get_current_user
 
-from app.models.user import User
+from app.models.base import db
+from app.models.user import User, Auth
 from app.utils.exceptions import UserExistException
 from app.utils.jwt import get_token, login_required
 from app.utils.response import response
@@ -40,7 +41,7 @@ def login():
 
 # @api.route('/info', methods=['GET'])
 # @login_required
-# @swag_from('api_docs/user/get_info.yml')
+# @swag_from('api_docs/user/get_book.yml')
 # def get_info():
 #     user = get_current_user()
 #     data = {
@@ -58,3 +59,25 @@ def modify_password():
     user = get_current_user()
     user.modify_password(form.old_password.data, form.new_password.data)
     return response(0, 'ok')
+
+
+@api.route('/auths', methods=['GET'])
+@login_required
+@swag_from('api_docs/user/get_auths.yml')
+def get_auths():
+    current_user = get_current_user()
+    if current_user.is_admin:
+        auths = Auth.query.all()
+    else:
+        roles = current_user.roles.all()
+        auths = [auth for role in roles for auth in role.auths.all()]
+    data = {}
+    for auth in auths:
+        auth_data = auth.data()
+        module = auth_data['module']
+        if not data.get(module):
+            data[module] = []
+            data[module].append(auth_data)
+        else:
+            data[module].append(auth_data)
+    return response(0, 'ok', data=data)

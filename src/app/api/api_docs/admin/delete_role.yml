@@ -1,0 +1,18 @@
+删除角色
+删除角色
+---
+tags:
+  - v1/admin
+parameters:
+  - name: id
+    in: path
+    type: integer
+    required: true
+    description: 角色id
+responses:
+  500:
+    description: 服务端错误
+  200:
+    description: 成功
+security:
+  - api_key: []

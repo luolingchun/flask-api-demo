@@ -3,12 +3,11 @@
 # @Time    : 2020/5/16 17:27
 
 from functools import wraps
-
-from flask import request, current_app
+from flask import request
 from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_user, \
     create_access_token, create_refresh_token
 
-from app.models.user import User, Auth
+from app.models.user import User
 from app.utils.exceptions import AuthException, InvalidTokenException, UserNotExistException, \
     ExpiredTokenException
 
@@ -16,11 +15,13 @@ jwt = JWTManager()
 identity = {
     'uid': -1
 }
-
+# 存放所有权限，数据库初始化时使用
 auths = []
 
 
 def add_auth(name, module, prefix):
+    """添加权限装饰器"""
+
     def wrapper(func):
         auths.append([name, module, prefix + '.' + func.__name__])
         return func
@@ -29,6 +30,8 @@ def add_auth(name, module, prefix):
 
 
 def admin_required(fn):
+    """管理权限装饰器"""
+
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
@@ -41,6 +44,8 @@ def admin_required(fn):
 
 
 def role_required(fn):
+    """角色权限装饰器"""
+
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
@@ -59,6 +64,8 @@ def role_required(fn):
 
 
 def login_required(fn):
+    """登录装饰器"""
+
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
@@ -77,11 +84,13 @@ def user_loader_callback(identity):
 
 @jwt.expired_token_loader
 def expired_loader_callback():
+    """token过期处理"""
     return ExpiredTokenException()
 
 
 @jwt.invalid_token_loader
 def invalid_loader_callback(e):
+    """无效token处理"""
     return InvalidTokenException()
 
 
@@ -126,6 +135,7 @@ def get_refresh_token(user, scope=None, expires_delta=None, verify_remote_addr=F
 
 
 def is_user_allowed(roles):
+    """判断用户是否有权限"""
     endpoints = [auth.endpoint for role in roles for auth in role.auths.all()]
     endpoint = request.endpoint
     return endpoint in endpoints

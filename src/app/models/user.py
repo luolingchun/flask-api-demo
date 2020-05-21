@@ -2,6 +2,16 @@
 # @Author  : llc
 # @Time    : 2020/5/4 17:24
 
+"""
+采用经典的权限5表设计：
+User        Role        Auth
+  \         /   \        /
+   \       /     \      /
+    uer_role     role_auth
+User和Role为多对多关系
+Role和Auth为多对多关系
+"""
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .base import Base, db
@@ -22,8 +32,8 @@ role_auth = db.Table(
 
 
 class User(Base):
-    name = db.Column(db.String(24), unique=True, nullable=False, comment='用户名')
-    email = db.Column(db.String(24), unique=True, nullable=True, comment='邮箱')
+    name = db.Column(db.String(32), unique=True, nullable=False, comment='用户名')
+    email = db.Column(db.String(32), unique=True, nullable=True, comment='邮箱')
     is_admin = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment='是否是超级管理员')
     # is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment='是否激活')
     roles = db.relationship('Role', secondary=user_role, backref=db.backref('users', lazy='dynamic'), lazy='dynamic')
@@ -79,7 +89,7 @@ class User(Base):
 
 
 class Role(Base):
-    name = db.Column(db.String(24), unique=True, comment='角色名称')
+    name = db.Column(db.String(32), unique=True, comment='角色名称')
     describe = db.Column(db.String(255), comment='角色描述')
     auths = db.relationship('Auth', secondary=role_auth, backref=db.backref('roles', lazy='dynamic'), lazy='dynamic')
 
@@ -96,9 +106,9 @@ class Role(Base):
 
 
 class Auth(Base):
-    name = db.Column(db.String(24), unique=True, comment='权限名称')
-    module = db.Column(db.String(24), comment='权限模块')
-    endpoint = db.Column(db.String(24), comment='路由端点')
+    name = db.Column(db.String(32), unique=True, comment='权限名称')
+    module = db.Column(db.String(32), comment='权限模块')
+    endpoint = db.Column(db.String(255), comment='路由端点')
 
     def data(self):
         return {'id': self.id, 'name': self.name, 'module': self.module}
