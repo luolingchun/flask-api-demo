@@ -2,7 +2,7 @@
 获取所有权限
 ---
 tags:
-  - v1/admin
+  - v1/admin/auth
 responses:
   500:
     description: 服务端错误

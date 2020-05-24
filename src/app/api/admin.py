@@ -7,11 +7,13 @@ from flask import Blueprint
 from flasgger import swag_from
 from sqlalchemy import func
 
-from app.forms.admin import GetUsersForm, UserRoleForm, CreateRoleForm, UpdateRoleForm, GetRolesForm, RoleAuthForm
-from app.forms.user import ModifyPasswordForm
+from app.forms.admin import GetUsersForm, UserRoleForm, CreateRoleForm, UpdateRoleForm, GetRolesForm, RoleAuthForm, \
+    AddUserForm
+from app.forms.admin import ModifyPasswordForm
 from app.models.base import db
 from app.models.user import User, Role, Auth
-from app.utils.exceptions import UserNotExistException, RoleExistException, RoleNotExistException, RoleHasUserException
+from app.utils.exceptions import UserNotExistException, RoleExistException, RoleNotExistException, RoleHasUserException, \
+    UserExistException
 from app.utils.jwt import admin_required, add_auth, role_required
 from app.utils.response import response
 
@@ -48,12 +50,7 @@ def create_role():
     role = Role.query.filter_by(name=form.name.data).first()
     if role:
         raise RoleExistException()
-    Role.create(name=form.name.data, describe=form.describe.data)
-
-    # for auth in form.auths.data:
-    #     meta = find_auth_module(auth)
-    #     if meta:
-    #         manager.auth_model.create(auth=meta.auth, module=meta.module, group_id=group.id)
+    Role.create(name=form.name.data, describe=form.describe.data, auth_ids=form.auth_ids.data)
 
     return response(0, 'ok')
 
@@ -105,6 +102,17 @@ def delete_role(id):
     return response(0, 'ok')
 
 
+@api.route('/add/user', methods=['POST'])
+@swag_from('api_docs/admin/add_user.yml')
+def add_user():
+    form = AddUserForm().validate_for_api()
+    user = User.query.filter_by(name=form.name.data).first()
+    if user:
+        raise UserExistException()
+    User.create(form)
+    return response(0, 'ok')
+
+
 @api.route('/users', methods=['GET'])
 @add_auth(name='获取所有用户', module='用户', prefix=__bp__)
 @role_required
@@ -131,7 +139,7 @@ def modify_user_password(id):
     if user is None:
         raise UserNotExistException()
 
-    user.modify_password(form.old_password.data, form.new_password.data)
+    user.modify_password(new_password=form.password.data, admin=True)
     return response(0, 'ok')
 
 
@@ -164,7 +172,7 @@ def set_user_role():
 
 @api.route('role/auth', methods=['PUT'])
 @add_auth(name='给角色添加权限', module='角色', prefix=__bp__)
-# @role_required
+@role_required
 @swag_from('api_docs/admin/set_role_auth.yml')
 def set_role_auth():
     form = RoleAuthForm().validate_for_api()

@@ -3,7 +3,7 @@
 auth_ids示例：[1,2,3]
 ---
 tags:
-  - v1/admin
+  - v1/admin/role
 parameters:
   - name: role_id
     in: formData

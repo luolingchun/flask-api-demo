@@ -6,7 +6,6 @@ from flask import Blueprint
 from flasgger.utils import swag_from
 from flask_jwt_extended import get_current_user
 
-from app.models.base import db
 from app.models.user import User, Auth
 from app.utils.exceptions import UserExistException
 from app.utils.jwt import get_token, login_required
@@ -26,6 +25,8 @@ def register():
     user = User.query.filter_by(name=form.name.data).first()
     if user:
         raise UserExistException()
+    # 用户中注册时不能自己添加角色
+    form.role_ids.data = None
     User.create(form)
     return response(0, 'ok')
 

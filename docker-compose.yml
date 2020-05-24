@@ -1,0 +1,10 @@
+version: 2
+services:
+  flask-api:
+    image: flask-api:v1
+    container_name: flask-api
+    restart: always
+    privileged: true
+
+    volumes:
+      - "./log:/data/log/"

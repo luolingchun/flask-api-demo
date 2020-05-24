@@ -3,7 +3,7 @@
 # @Time    : 2020/5/4 17:24
 
 """
-采用经典的权限5表设计：
+采用经典的权限五表设计：
 User        Role        Auth
   \         /   \        /
    \       /     \      /
@@ -16,7 +16,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from .base import Base, db
 from app.utils.exceptions import UserNotExistException, PasswordException
-from app.forms.user import RegisterForm
 
 user_role = db.Table(
     'user_role',
@@ -52,7 +51,11 @@ class User(Base):
             return False
         return check_password_hash(self._password, raw)
 
-    def modify_password(self, old_password, new_password):
+    def modify_password(self, old_password=None, new_password=None, admin=False):
+        if admin:
+            self.password = new_password
+            db.session.commit()
+            return True
         if self.check_password(old_password):
             self.password = new_password
             db.session.commit()
@@ -60,7 +63,7 @@ class User(Base):
         raise PasswordException(message='原始密码错误')
 
     @staticmethod
-    def create(form: RegisterForm):
+    def create(form):
         user = User()
         user.name = form.name.data
         user.password = form.password.data
@@ -94,10 +97,12 @@ class Role(Base):
     auths = db.relationship('Auth', secondary=role_auth, backref=db.backref('roles', lazy='dynamic'), lazy='dynamic')
 
     @staticmethod
-    def create(name, describe):
+    def create(name, describe, auth_ids):
         role = Role()
         role.name = name
         role.describe = describe
+        if auth_ids:
+            role.auths = Auth.query.filter(Auth.id.in_(auth_ids)).all()
         db.session.add(role)
         db.session.commit()
 

@@ -5,7 +5,7 @@
 # 系统配置
 from datetime import timedelta
 
-APP_NAME = 'XXX服务'
+APP_NAME = 'flask-api服务'
 
 # -------------------数据库配置-------------------
 # 数据库配置：sqlite

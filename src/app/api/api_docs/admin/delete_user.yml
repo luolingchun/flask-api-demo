@@ -2,7 +2,7 @@
 删除用户
 ---
 tags:
-  - v1/admin
+  - v1/admin/user
 parameters:
   - name: id
     in: path

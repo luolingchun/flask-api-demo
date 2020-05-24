@@ -2,7 +2,7 @@
 更新角色
 ---
 tags:
-  - v1/admin
+  - v1/admin/role
 parameters:
   - name: name
     in: formData
