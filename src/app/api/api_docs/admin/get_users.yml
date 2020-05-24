@@ -2,15 +2,15 @@
 获取所有用户
 ---
 tags:
-  - v1/admin
+  - v1/admin/user
 parameters:
   - name: page
-    in: args
+    in: qurey
     type: integer
     description: 页码
-  - name: integer
-    in: args
-    type: string
+  - name: page_size
+    in: query
+    type: integer
     description: 每页个数
 responses:
   500:

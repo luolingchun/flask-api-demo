@@ -2,7 +2,7 @@
 # @Author  : llc
 # @Time    : 2020/5/5 18:54
 """
-全部异常，系统、用户、权限...
+全局异常，系统、用户、权限...
 """
 from flask import json
 from werkzeug.exceptions import HTTPException

@@ -13,7 +13,3 @@ app = create_app()
 def index():
     """根目录重定向到apidocs"""
     return redirect(url_for('flasgger.apidocs'))
-
-
-if __name__ == '__main__':
-    app.run(debug=True)

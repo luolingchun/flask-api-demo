@@ -2,7 +2,7 @@
 删除角色
 ---
 tags:
-  - v1/admin
+  - v1/admin/role
 parameters:
   - name: id
     in: path

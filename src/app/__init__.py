@@ -57,7 +57,7 @@ def create_app():
     from . import config
     # 创建Flask实例
     app = Flask(__name__)
-    # 配置项
+    # 全局配置项
     app.config.from_object(config)
     # swagger 文档
     Swagger(app, config=config.SWAGGER_CONFIG)

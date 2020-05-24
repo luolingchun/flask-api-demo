@@ -1,18 +1,31 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/17 15:36
-from flask import request
-from wtforms import StringField, IntegerField, FieldList
-from wtforms.validators import DataRequired, Optional
+
+from wtforms import StringField, IntegerField, FieldList, PasswordField
+from wtforms.validators import DataRequired, Optional, length, Regexp, EqualTo
 
 from .base import BaseForm
-from ..utils.exceptions import ParameterException
+
+
+class AddUserForm(BaseForm):
+    name = StringField(validators=[DataRequired(), length(min=4, max=32)])
+    password = PasswordField(validators=[DataRequired(), EqualTo('confirm_password'), length(min=6)])
+    confirm_password = PasswordField(validators=[DataRequired()])
+    email = StringField(
+        validators=[
+            Regexp(r'^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$'),
+            Optional()
+        ])
+    role_ids = FieldList(IntegerField(validators=[DataRequired()]), default=[1])
+    key_list = ['role_ids']
 
 
 class CreateRoleForm(BaseForm):
     name = StringField(validators=[DataRequired()])
     describe = StringField(validators=[Optional()])
-    # auths = FieldList(StringField(validators=[DataRequired(message='请输入auths字段')]))
+    auth_ids = FieldList(StringField(validators=[DataRequired()]))
+    key_list = ['auth_ids']
 
 
 class GetRolesForm(BaseForm):
@@ -34,21 +47,15 @@ class GetUsersForm(BaseForm):
 class UserRoleForm(BaseForm):
     user_id = IntegerField(validators=[DataRequired()])
     role_ids = FieldList(IntegerField(validators=[DataRequired()]), validators=[DataRequired()], _prefix=',')
+    key_list = ['role_ids']
 
 
 class RoleAuthForm(BaseForm):
     role_id = IntegerField(validators=[DataRequired()])
     # auth_ids只能接收object，不能接收字符串
     auth_ids = FieldList(IntegerField(validators=[DataRequired()]), validators=[DataRequired()], _prefix=',')
+    key_list = ['auth_ids']
 
-    def __init__(self):
-        # content-type为multipart/form-data或application/x-www-form-urlencoded时:
-        # 将auth_ids转化为object
-        auth_ids = request.form.get('auth_ids')
-        try:
-            assert auth_ids.startswith('[')
-            assert auth_ids.endswith(']')
-            kwargs = {'auth_ids': list(eval(auth_ids))} if auth_ids else {}
-        except:
-            raise ParameterException(message='参数错误：auth_ids')
-        super(RoleAuthForm, self).__init__(**kwargs)
+
+class ModifyPasswordForm(BaseForm):
+    password = PasswordField(validators=[DataRequired(), length(min=6)])

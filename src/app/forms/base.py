@@ -12,7 +12,7 @@ from app.utils.exceptions import ParameterException
 class BaseForm(Form):
     """表单、参数验证基类"""
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         content_type = request.content_type
         if content_type == 'application/x-www-form-urlencoded':
             data = request.form.to_dict()
@@ -23,9 +23,12 @@ class BaseForm(Form):
         else:
             data = {}
         args = request.args.to_dict()
-        if kwargs:
+        if hasattr(self, 'key_list'):
+            # content-type为multipart/form-data或application/x-www-form-urlencoded时:
+            # 将string转化为list object
+            kwargs = self.string2list()
             data.update(**kwargs)
-        print(data)
+        print(data, args)
         super(BaseForm, self).__init__(data=data, **args)
 
     def validate_for_api(self):
@@ -38,3 +41,17 @@ class BaseForm(Form):
             raise ParameterException(message=self.errors)
 
         return self
+
+    def string2list(self):
+        kwargs = {}
+        for key in self.key_list:
+            value = request.form.get(key)
+            if value is None:
+                continue
+            try:
+                assert value.startswith('[')
+                assert value.endswith(']')
+                kwargs[key] = list(eval(value))
+            except:
+                raise ParameterException(message=f'参数错误：{key}')
+        return kwargs

@@ -2,15 +2,15 @@
 获取所有角色
 ---
 tags:
-  - v1/admin
+  - v1/admin/role
 parameters:
   - name: page
-    in: args
+    in: query
     type: integer
     description: 页码
-  - name: integer
-    in: args
-    type: string
+  - name: page_size
+    in: query
+    type: integer
     description: 每页个数
 responses:
   500:

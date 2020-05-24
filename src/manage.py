@@ -5,9 +5,10 @@
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Server
 
-from app.webapp import app
+from app import create_app
 from app.models.base import db
 
+app = create_app()
 manager = Manager(app)
 migrate = Migrate(app, db)
 
