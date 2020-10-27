@@ -5,7 +5,7 @@
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, length, EqualTo, Regexp, Optional
 
-from .base import BaseForm
+from . import BaseForm
 
 
 class RegisterForm(BaseForm):

@@ -10,7 +10,7 @@ from sqlalchemy import func
 from app.forms.admin import GetUsersForm, UserRoleForm, CreateRoleForm, UpdateRoleForm, GetRolesForm, RoleAuthForm, \
     AddUserForm
 from app.forms.admin import ModifyPasswordForm
-from app.models.base import db
+from app.models import db
 from app.models.user import User, Role, Auth
 from app.utils.exceptions import UserNotExistException, RoleExistException, RoleNotExistException, RoleHasUserException, \
     UserExistException
