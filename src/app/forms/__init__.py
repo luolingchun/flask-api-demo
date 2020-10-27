@@ -19,7 +19,7 @@ class BaseForm(Form):
             data = request.form.to_dict()
         elif 'multipart/form-data' in str(content_type):
             data = request.form.to_dict()
-        elif content_type == 'application/json':
+        elif content_type.startswith('application/json'):
             data = request.json
         else:
             data = {}
