@@ -48,7 +48,7 @@ def init_jwt(app):
 
 def init_db(app: Flask):
     """初始化数据库"""
-    from app.models.base import db
+    from app.models import db
     db.init_app(app)
     # db.create_all(app=app)
 

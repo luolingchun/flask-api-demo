@@ -5,10 +5,9 @@
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Server
 
-from app import create_app
-from app.models.base import db
+from app.models import db
+from app.uwsgi import app
 
-app = create_app()
 manager = Manager(app)
 migrate = Migrate(app, db)
 
@@ -22,7 +21,7 @@ def test():
 def init_db():
     from app.models.user import User, Auth, Role
     from app.utils.jwt import auths
-    user = User.query.filter_by(name='super').first()
+    user = db.session.query(User).filter_by(name='super').first()
     if user:
         print('超级管理员已存在.')
     else:
@@ -36,7 +35,7 @@ def init_db():
         print('添加超级管理员成功.')
 
     for name, module, endpoint in auths:
-        auth = Auth.query.filter_by(name=name).first()
+        auth = db.session.query(Auth).filter_by(name=name).first()
         if auth:
             continue
         auth = Auth()
@@ -46,7 +45,7 @@ def init_db():
         db.session.add(auth)
         db.session.commit()
     print('添加权限成功.')
-    role = Role.query.filter_by(name='普通用户').first()
+    role = db.session.query(Role).filter_by(name='普通用户').first()
     if role:
         print('普通用户角色已存在.')
     else:
@@ -58,7 +57,7 @@ def init_db():
     print('添加普通用户角色成功.')
 
 
-manager.add_command("runserver", Server(use_debugger=True))
+manager.add_command("runserver", Server(use_debugger=True, host='0.0.0.0', port='5000'))
 # 数据库迁移
 # 1. python manage.py db init
 # 2. python manage.py db migrate

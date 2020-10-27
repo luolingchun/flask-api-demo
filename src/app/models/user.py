@@ -14,7 +14,7 @@ Role和Auth为多对多关系
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from .base import Base, db
+from . import Base, db
 from app.utils.exceptions import UserNotExistException, PasswordException
 
 user_role = db.Table(
