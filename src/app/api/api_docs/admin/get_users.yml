@@ -5,7 +5,7 @@ tags:
   - v1/admin/user
 parameters:
   - name: page
-    in: qurey
+    in: query
     type: integer
     description: 页码
   - name: page_size
