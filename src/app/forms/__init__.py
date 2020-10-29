@@ -15,14 +15,17 @@ class BaseForm(Form):
 
     def __init__(self):
         content_type = request.content_type
-        if content_type == 'application/x-www-form-urlencoded':
-            data = request.form.to_dict()
-        elif 'multipart/form-data' in str(content_type):
-            data = request.form.to_dict()
-        elif content_type.startswith('application/json'):
-            data = request.json
-        else:
+        if content_type is None:
             data = {}
+        else:
+            if content_type == 'application/x-www-form-urlencoded':
+                data = request.form.to_dict()
+            elif 'multipart/form-data' in str(content_type):
+                data = request.form.to_dict()
+            elif content_type.startswith('application/json'):
+                data = request.json
+            else:
+                data = {}
         args = request.args.to_dict()
         if hasattr(self, 'key_list'):
             # content-type为multipart/form-data或application/x-www-form-urlencoded时:
