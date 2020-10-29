@@ -3,7 +3,7 @@
 # @Time    : 2020/5/5 17:33
 
 
-def response(code, message, **kwargs):
+def response(code=0, message='ok', **kwargs):
     """响应体数据格式"""
     data = {"code": code, "message": message}
     data.update(**kwargs)
