@@ -70,13 +70,13 @@ def get_roles():
     return response(0, 'ok', data=data, total=total, total_page=total_page)
 
 
-@api.route('/roles/<id>', methods=['PUT'])
+@api.route('/roles/<rid>', methods=['PUT'])
 @add_auth(name='更新角色', module='角色', prefix=__bp__)
 @role_required
 @swag_from('api_docs/admin/update_role.yml')
-def update_role(id):
+def update_role(rid):
     form = UpdateRoleForm().validate_for_api()
-    role = Role.query.filter_by(id=id).first()
+    role = Role.query.filter_by(id=rid).first()
     if role is None:
         raise RoleNotExistException()
     if Role.query.filter_by(name=form.name.data).first():
@@ -87,12 +87,12 @@ def update_role(id):
     return response(0, 'ok', data=role.data())
 
 
-@api.route('/roles/<int:id>', methods=['DELETE'])
+@api.route('/roles/<int:rid>', methods=['DELETE'])
 @add_auth(name='删除角色', module='角色', prefix=__bp__)
 @role_required
 @swag_from('api_docs/admin/delete_role.yml')
-def delete_role(id):
-    role = Role.query.filter_by(id=id).first()
+def delete_role(rid):
+    role = Role.query.filter_by(id=rid).first()
     if role is None:
         raise RoleNotExistException()
     if role.users.all():
@@ -102,7 +102,7 @@ def delete_role(id):
     return response(0, 'ok')
 
 
-@api.route('/add/user', methods=['POST'])
+@api.route('/user', methods=['POST'])
 @swag_from('api_docs/admin/add_user.yml')
 def add_user():
     form = AddUserForm().validate_for_api()
@@ -128,14 +128,14 @@ def get_users():
     return response(0, 'ok', data=data, total=total, total_page=total_page)
 
 
-@api.route('/password/<id>', methods=['PUT'])
+@api.route('/password/<uid>', methods=['PUT'])
 @add_auth(name='修改用户密码', module='用户', prefix=__bp__)
 @role_required
 @swag_from('api_docs/admin/modify_user_password.yml')
-def modify_user_password(id):
+def modify_user_password(uid):
     form = ModifyPasswordForm().validate_for_api()
 
-    user = User.query.filter_by(id=id).first()
+    user = User.query.filter_by(id=uid).first()
     if user is None:
         raise UserNotExistException()
 
@@ -143,12 +143,12 @@ def modify_user_password(id):
     return response(0, 'ok')
 
 
-@api.route('/users/<id>', methods=['DELETE'])
+@api.route('/users/<uid>', methods=['DELETE'])
 @add_auth(name='删除用户', module='用户', prefix=__bp__)
 @role_required
 @swag_from('api_docs/admin/delete_user.yml')
-def delete_user(id):
-    user = User.query.filter_by(id=id).first()
+def delete_user(uid):
+    user = User.query.filter_by(id=uid).first()
     if user is None:
         raise UserNotExistException()
     db.session.delete(user)

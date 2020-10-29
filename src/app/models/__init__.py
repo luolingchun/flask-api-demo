@@ -12,6 +12,7 @@ db = SQLAlchemy()
 
 def get_offset_limit(page, page_size):
     """获取页码偏移量"""
+    page = 1 if page < 1 else page
     limit = page_size
     offset = (page - 1) * limit
     return offset, limit
