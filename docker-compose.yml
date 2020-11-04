@@ -6,5 +6,8 @@ services:
     restart: always
     privileged: true
 
+    environment:
+      - PROCESSES=4
+
     volumes:
       - "./log:/data/log/"
