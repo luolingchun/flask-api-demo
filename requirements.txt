@@ -1,10 +1,6 @@
-flask==1.1.2
-wtforms==2.3.1
-Flask-JWT-Extended==3.24.1
+flask
+Flask-JWT-Extended
 flask_migrate
 flask_script
 flask_sqlalchemy
-flasgger
-flask_cors
 pymysql
-flask-limiter

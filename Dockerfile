@@ -1,26 +1,40 @@
-FROM alpine:3.9
+FROM python:3.8-slim-buster
 
 MAINTAINER LLC
 
-COPY src /work/flask-api/src
-COPY conf/uwsgi.ini /work/flask-api/conf/uwsgi.ini
-COPY conf/supervisor.conf /etc/supervisord.d/flask-api.conf
+# 使用上海时区
+ENV TZ=Asia/Shanghai
+
+# 拷贝依赖包文件
 COPY requirements.txt /tmp/requirements.txt
 
-RUN echo "http://mirrors.aliyun.com/alpine/v3.9/main/" > /etc/apk/repositories && \
-    echo "http://mirrors.aliyun.com/alpine/v3.9/community/" >> /etc/apk/repositories && \
+# 基础环境安装
+RUN \
+    apt-get update -y && \
+    apt-get install -y gcc && \
     \
-    apk add --no-cache gcc python3 python3-dev linux-headers libc-dev && \
-    apk add --no-cache bash bash-doc bash-completion && \
-    \
-    pip3 install -r /tmp/requirements.txt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com && \
-    pip3 install supervisor flask uwsgi -i http://pypi.douban.com/simple --trusted-host pypi.douban.com && \
+    python -m pip install -r /tmp/requirements.txt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com && \
+    python -m pip install supervisor uwsgi -i http://pypi.douban.com/simple --trusted-host pypi.douban.com && \
     \
     echo_supervisord_conf > /etc/supervisord.conf && \
     echo "[include]" >> /etc/supervisord.conf && \
-    echo "files = /etc/supervisord.d/*.conf" >> /etc/supervisord.conf && \
+    echo "files = /etc/supervisord.d/*.ini" >> /etc/supervisord.conf && \
     \
-    rm -rf /var/cache/apk/* && \
-    rm -rf ~/.cache/pip
+    apt-get purge -y gcc && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf ~/.cache/pip/*
+
+# 系统环境变量
+ARG PROJECT_NAME
+
+# 工作空间
+WORKDIR /work/$PROJECT_NAME/src
+
+# 程序部署
+COPY bin /work/$PROJECT_NAME/bin
+COPY src /work/$PROJECT_NAME/src
+COPY conf/uwsgi.ini /work/$PROJECT_NAME/conf/uwsgi.ini
+COPY conf/supervisor.ini /etc/supervisord.d/$PROJECT_NAME.ini
+
 
 ENTRYPOINT ["supervisord", "-n","-c", "/etc/supervisord.conf"]
