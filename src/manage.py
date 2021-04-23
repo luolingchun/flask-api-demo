@@ -20,7 +20,7 @@ def test():
 @manager.command
 def init_db():
     from app.models.user import User, Auth, Role
-    from app.utils.jwt import auths
+    from app.utils.jwt_tools import auths
     user = db.session.query(User).filter_by(name='super').first()
     if user:
         print('超级管理员已存在.')

@@ -9,11 +9,18 @@ from app import create_app
 app = create_app()
 
 
-@app.route('/')
-def index():
-    """根目录重定向到apidocs"""
+@app.route('/swag')
+def swag():
+    """swag文档"""
     # print(app.url_map)
-    return redirect(url_for('flasgger.apidocs'))
+    return redirect(url_for('doc_page_swagger'))
+
+
+@app.route('/redoc')
+def redoc():
+    """redoc文档"""
+    # print(app.url_map)
+    return redirect(url_for('doc_page_redoc'))
 
 
 if __name__ == '__main__':

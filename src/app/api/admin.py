@@ -4,17 +4,15 @@
 import math
 
 from flask import Blueprint
-from flasgger import swag_from
+
 from sqlalchemy import func
 
-from app.forms.admin import GetUsersForm, UserRoleForm, CreateRoleForm, UpdateRoleForm, GetRolesForm, RoleAuthForm, \
-    AddUserForm
-from app.forms.admin import ModifyPasswordForm
+
 from app.models import db
 from app.models.user import User, Role, Auth
 from app.utils.exceptions import UserNotExistException, RoleExistException, RoleNotExistException, RoleHasUserException, \
     UserExistException
-from app.utils.jwt import admin_required, add_auth, role_required
+from app.utils.jwt_tools import admin_required, add_auth, role_required
 from app.utils.response import response
 
 __version__ = '/v1'
@@ -25,7 +23,6 @@ api = Blueprint(__bp__, __name__, url_prefix=__version__ + __bp__)
 @api.route('/auths', methods=['GET'])
 @add_auth(name='获取所有权限', module='权限', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/get_auths.yml')
 def get_auths():
     auths = Auth.query.all()
     data = {}
@@ -44,7 +41,6 @@ def get_auths():
 @api.route('/roles', methods=['POST'])
 @add_auth(name='新建角色', module='角色', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/create_role.yml')
 def create_role():
     form = CreateRoleForm().validate_for_api()
     role = Role.query.filter_by(name=form.name.data).first()
@@ -58,7 +54,6 @@ def create_role():
 @api.route('/roles', methods=['GET'])
 @add_auth(name='获取所有角色', module='角色', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/get_roles.yml')
 def get_roles():
     form = GetRolesForm().validate_for_api()
     limit = form.page_size.data
@@ -73,7 +68,6 @@ def get_roles():
 @api.route('/roles/<rid>', methods=['PUT'])
 @add_auth(name='更新角色', module='角色', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/update_role.yml')
 def update_role(rid):
     form = UpdateRoleForm().validate_for_api()
     role = Role.query.filter_by(id=rid).first()
@@ -90,7 +84,6 @@ def update_role(rid):
 @api.route('/roles/<int:rid>', methods=['DELETE'])
 @add_auth(name='删除角色', module='角色', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/delete_role.yml')
 def delete_role(rid):
     role = Role.query.filter_by(id=rid).first()
     if role is None:
@@ -103,7 +96,6 @@ def delete_role(rid):
 
 
 @api.route('/user', methods=['POST'])
-@swag_from('api_docs/admin/add_user.yml')
 def add_user():
     form = AddUserForm().validate_for_api()
     user = User.query.filter_by(name=form.name.data).first()
@@ -116,7 +108,6 @@ def add_user():
 @api.route('/users', methods=['GET'])
 @add_auth(name='获取所有用户', module='用户', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/get_users.yml')
 def get_users():
     form = GetUsersForm().validate_for_api()
     limit = form.page_size.data
@@ -131,7 +122,6 @@ def get_users():
 @api.route('/password/<uid>', methods=['PUT'])
 @add_auth(name='修改用户密码', module='用户', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/modify_user_password.yml')
 def modify_user_password(uid):
     form = ModifyPasswordForm().validate_for_api()
 
@@ -146,7 +136,6 @@ def modify_user_password(uid):
 @api.route('/users/<uid>', methods=['DELETE'])
 @add_auth(name='删除用户', module='用户', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/delete_user.yml')
 def delete_user(uid):
     user = User.query.filter_by(id=uid).first()
     if user is None:
@@ -159,7 +148,6 @@ def delete_user(uid):
 @api.route('user/role', methods=['PUT'])
 @add_auth(name='给用户添加角色', module='用户', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/set_user_role.yml')
 def set_user_role():
     form = UserRoleForm().validate_for_api()
     user = User.query.filter_by(id=form.user_id.data).first()
@@ -173,7 +161,6 @@ def set_user_role():
 @api.route('role/auth', methods=['PUT'])
 @add_auth(name='给角色添加权限', module='角色', prefix=__bp__)
 @role_required
-@swag_from('api_docs/admin/set_role_auth.yml')
 def set_role_auth():
     form = RoleAuthForm().validate_for_api()
     role = Role.query.filter_by(id=form.role_id.data).first()

@@ -4,3 +4,4 @@ flask_migrate
 flask_script
 flask_sqlalchemy
 pymysql
+spectree

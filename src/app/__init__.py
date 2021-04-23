@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/4 15:52
+import traceback
 
 from flask import Flask
-from flasgger import Swagger
-from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
-
-from app.utils.jwt import jwt
 
 
 def init_exception(app: Flask):
@@ -23,12 +20,8 @@ def init_exception(app: Flask):
             message = e.description
             return APIException(code, message)
         else:
-            if not app.config['DEBUG']:
-                import traceback
-                traceback.format_exc()
-                return UnknownException()
-            else:
-                raise e
+            traceback.print_exc()
+            return UnknownException()
 
 
 def register_blueprints(app: Flask):
@@ -36,14 +29,15 @@ def register_blueprints(app: Flask):
     from app.api.user import api as user_api
     from app.api.admin import api as admin_api
     from app.api.book import api as book_api
-    app.register_blueprint(user_api)
-    app.register_blueprint(admin_api)
+    # app.register_blueprint(user_api)
+    # app.register_blueprint(admin_api)
     app.register_blueprint(book_api)
 
 
 def init_jwt(app):
     """初始化JWT"""
-    jwt.init_app(app)
+    from app.utils.jwt_tools import jwt_manager
+    jwt_manager.init_app(app)
 
 
 def init_db(app: Flask):
@@ -53,16 +47,20 @@ def init_db(app: Flask):
     # db.create_all(app=app)
 
 
+def init_spec(app: Flask):
+    """初始化API文档"""
+    from app.specs import spec
+    spec.register(app)
+
+
 def create_app():
     from . import config
     # 创建Flask实例
     app = Flask(__name__)
     # 全局配置项
     app.config.from_object(config)
-    # swagger 文档
-    Swagger(app, config=config.SWAGGER_CONFIG)
-    # 跨域支持
-    CORS(app)
+    # openapi文档
+    init_spec(app)
     # 初始化全局异常
     init_exception(app)
     # 初始化JWT

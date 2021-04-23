@@ -15,6 +15,7 @@ services:
     volumes:
       - "/data/flask-api-demo/data:/data/data"
       - "/data/flask-api-demo/log:/data/log"
+      - "./:/work/flask-api-demo"
 
   flask-mysql:
     image: mysql:5.7.31
