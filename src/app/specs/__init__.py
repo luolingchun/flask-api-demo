@@ -5,7 +5,9 @@
 from pydantic import BaseModel, Field
 from spectree import SpecTree
 
-spec = SpecTree("flask", annotations=True)
+from app.config import APP_NAME
+
+spec = SpecTree("flask", TITLE=APP_NAME, VERSION="1.0", MODE="strict")
 
 
 class JsonResponse(BaseModel):

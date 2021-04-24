@@ -14,3 +14,7 @@ class QueryBook(BaseModel):
 class CreateBook(BaseModel):
     name: str = Field(description='图书名称')
     author: Optional[str] = Field(description='作者')
+
+
+class RequestHeader(BaseModel):
+    Authorization: str

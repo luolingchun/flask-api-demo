@@ -1,23 +1,30 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/4 15:57
-
-# 系统配置
+import os
 from datetime import timedelta
 
+APP_NAME = 'XXX API接口'
+
 # -------------------数据库配置-------------------
-# 数据库配置：sqlite
-# DB_URI = 'sqlite:///../flask_api.db'
+mode = os.getenv('ENV', 'publish')
+if mode == 'dev':
+    # 数据库配置：sqlite
+    DB_URI = "sqlite:////mnt/d/flask_api.db"
 
-# 数据库配置：mysql
-USER = 'root'
-PASSWORD = '123456'
-HOST = 'localhost'
-DB_NAME = 'flask_api'
-DB_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}/{DB_NAME}?charset=utf8'
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
 
+else:
+    # 数据库配置：mysql
+    MYSQL_USER = os.getenv("MYSQL_USER")
+    MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
+    MYSQL_DB_NAME = os.getenv("MYSQL_DB_NAME")
+    MYSQL_HOST = os.getenv("MYSQL_HOST")
+    MYSQL_PORT = os.getenv("MYSQL_PORT")
+    DB_URI = f"pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB_NAME}?charset=utf8"
+
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_DATABASE_URI = DB_URI
-SQLALCHEMY_TRACK_MODIFICATIONS = False
 # -------------------数据库配置-------------------
 
 

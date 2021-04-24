@@ -5,7 +5,7 @@ from flask import Blueprint, request
 from spectree import Response
 
 from app.specs import spec, JsonResponse
-from app.specs.book import QueryBook, CreateBook
+from app.specs.book import QueryBook, CreateBook, RequestHeader
 from app.utils.enums import AuthModule
 from app.utils.jwt_tools import role_required, add_auth, login_required
 
@@ -20,12 +20,13 @@ api = Blueprint(__bp__, __name__, url_prefix=__version__ + __bp__)
 @api.route('', methods=['POST'])
 @add_auth(name='创建图书', module=AuthModule.BOOK, prefix='1e1cbdb2-6bdb-4091-91ec-5268fa8f2b73')
 @role_required
-@spec.validate(json=CreateBook, resp=Response(HTTP_200=JsonResponse), tags=["book"])
+@spec.validate(headers=RequestHeader, json=CreateBook, resp=Response(HTTP_200=JsonResponse), tags=["book"])
 def create_book():
     """创建图书"""
     _json = request.json
     print(_json)
-
+    cb = CreateBook(**_json)
+    print(cb.name)
     return response(JsonResponse())
 
 

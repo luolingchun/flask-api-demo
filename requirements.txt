@@ -1,7 +1,7 @@
-flask
-Flask-JWT-Extended
-flask_migrate
-flask_script
-flask_sqlalchemy
-pymysql
-spectree
+flask==1.1.2
+Flask-JWT-Extended==4.1.0
+flask_migrate==2.7.0
+flask_script==2.0.6
+flask_sqlalchemy==2.5.1
+pymysql==1.0.2
+spectree==0.4.2
