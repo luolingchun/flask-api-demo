@@ -4,9 +4,8 @@
 
 from functools import wraps
 
-from flask import request
 from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_user, \
-    create_access_token
+    create_access_token, create_refresh_token
 
 from app.models import db
 from app.models.user import User
@@ -19,24 +18,26 @@ jwt_manager = JWTManager()
 auths = []
 
 
-def add_auth(name, module, prefix):
+def add_auth(name, module, uuid):
     """添加权限装饰器"""
 
     def wrapper(func):
-        auths.append([name, module, prefix + '.' + func.__name__])
+        global auths
+        auths.append([name, module, uuid])
+        setattr(func, 'uuid', uuid)
         return func
 
     return wrapper
 
 
-def admin_required(fn):
+def super_required(fn):
     """管理权限装饰器"""
 
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         current_user = get_current_user()
-        if not current_user.is_admin:
+        if not current_user.is_super:
             raise AuthException(message='权限不足')
         return fn(*args, **kwargs)
 
@@ -48,17 +49,16 @@ def role_required(fn):
 
     @wraps(fn)
     def wrapper(*args, **kwargs):
+
         verify_jwt_in_request()
-        current_user = get_current_user()
-        if not current_user.is_admin:
-            roles = current_user.roles.all()
-            it = is_user_allowed(roles)
-            if not it:
-                raise AuthException(message='权限不足')
-            else:
-                return fn(*args, **kwargs)
-        else:
+        user = get_current_user()
+
+        if not hasattr(fn, 'uuid'):
+            setattr(fn, 'uuid', 'xxx')
+        if is_user_allowed(user, fn.uuid):
             return fn(*args, **kwargs)
+        else:
+            raise AuthException(message='权限不足')
 
     return wrapper
 
@@ -103,29 +103,21 @@ def unauthorized_loader_callback(e):
 
 @jwt_manager.additional_claims_loader
 def add_claims_to_access_token(identity):
-    return {
-        'uid': identity['uid'],
-    }
+    return identity
 
 
 def get_token(user):
     identity = {'uid': user.id}
     access_token = create_access_token(identity=identity)
-    return access_token
+    refresh_token = create_refresh_token(identity=identity)
+    return access_token, refresh_token
 
 
-def get_access_token(user, fresh=False, expires_delta=None):
-    identity = {'uid': user.id}
-    access_token = create_access_token(
-        identity=identity,
-        fresh=fresh,
-        expires_delta=expires_delta,
-    )
-    return access_token
-
-
-def is_user_allowed(roles):
+def is_user_allowed(user, uuid):
     """判断用户是否有权限"""
-    endpoints = [auth.endpoint for role in roles for auth in role.auths.all()]
-    endpoint = request.endpoint
-    return endpoint in endpoints
+    if user.is_super:
+        return True
+    roles = user.roles.all()
+    uuid_list = [auth.uuid for role in roles for auth in role.auths.all()]
+
+    return uuid in uuid_list

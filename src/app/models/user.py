@@ -14,8 +14,8 @@ Role和Auth为多对多关系
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from app.utils.exceptions import UserNotExistException, PasswordException, ActiveException
 from . import Base, db
-from app.utils.exceptions import UserNotExistException, PasswordException
 
 user_role = db.Table(
     'user_role',
@@ -31,12 +31,14 @@ role_auth = db.Table(
 
 
 class User(Base):
-    name = db.Column(db.String(32), unique=True, nullable=False, comment='用户名')
+    username = db.Column(db.String(32), unique=True, nullable=False, comment='用户名')
+    fullname = db.Column(db.String(32), unique=False, nullable=False, default='', comment='姓名')
     email = db.Column(db.String(32), unique=True, nullable=True, comment='邮箱')
-    is_admin = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment='是否是超级管理员')
-    # is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment='是否激活')
-    roles = db.relationship('Role', secondary=user_role, backref=db.backref('users', lazy='dynamic'), lazy='dynamic')
+    is_super = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment='是否是超级管理员')
+    is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment='是否激活')
     _password = db.Column('password', db.String(100), comment='密码')
+
+    roles = db.relationship('Role', secondary=user_role, back_populates="users")
 
     @property
     def password(self):
@@ -76,44 +78,60 @@ class User(Base):
         db.session.commit()
 
     def data(self):
-        return {'id': self.id, 'name': self.name, 'email': self.email,
-                'roles': [role.data() for role in self.roles.all()]}
+        return {
+            'id': self.id,
+            'username': self.username,
+            'fullname': self.fullname,
+            'is_active': self.is_active,
+            'roles': [role.data() for role in self.roles]
+        }
 
     @classmethod
-    def verify(cls, name, password):
-        user = cls.query.filter_by(name=name).first()
+    def verify(cls, username, password):
+        """验证用户名密码"""
+        user = db.session.query(cls).filter(cls.username == username).first()
         if user is None:
             raise UserNotExistException()
         if not user.check_password(password):
             raise PasswordException()
-        # if not user.is_active:
-        #     raise ActiveException()
+        if not user.is_active:
+            raise ActiveException()
         return user
 
 
 class Role(Base):
     name = db.Column(db.String(32), unique=True, comment='角色名称')
     describe = db.Column(db.String(255), comment='角色描述')
-    auths = db.relationship('Auth', secondary=role_auth, backref=db.backref('roles', lazy='dynamic'), lazy='dynamic')
+
+    users = db.relationship('Role', secondary=user_role, back_populates="roles")
+    auths = db.relationship('Auth', secondary=role_auth, back_populates="roles")
 
     @staticmethod
     def create(name, describe, auth_ids):
         role = Role()
         role.name = name
         role.describe = describe
+
         if auth_ids:
-            role.auths = Auth.query.filter(Auth.id.in_(auth_ids)).all()
+            role.auths = db.session.query(Auth).filter(Auth.id.in_(auth_ids)).all()
         db.session.add(role)
         db.session.commit()
 
     def data(self):
-        return {'id': self.id, 'name': self.name, 'describe': self.describe}
+        return {
+            'id': self.id,
+            'name': self.name,
+            'describe': self.describe,
+            'auths': [auth.data() for auth in self.auths]
+        }
 
 
 class Auth(Base):
     name = db.Column(db.String(32), unique=True, comment='权限名称')
     module = db.Column(db.String(32), comment='权限模块')
-    endpoint = db.Column(db.String(255), comment='路由端点')
+    uuid = db.Column(db.String(255), unique=True, comment='权限uuid')
+
+    roles = db.relationship('Auth', secondary=role_auth, back_populates="auths")
 
     def data(self):
         return {'id': self.id, 'name': self.name, 'module': self.module}

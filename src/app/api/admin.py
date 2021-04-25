@@ -12,7 +12,7 @@ from app.models import db
 from app.models.user import User, Role, Auth
 from app.utils.exceptions import UserNotExistException, RoleExistException, RoleNotExistException, RoleHasUserException, \
     UserExistException
-from app.utils.jwt_tools import admin_required, add_auth, role_required
+from app.utils.jwt_tools import super_required, add_auth, role_required
 from app.utils.response import response
 
 __version__ = '/v1'
@@ -21,7 +21,7 @@ api = Blueprint(__bp__, __name__, url_prefix=__version__ + __bp__)
 
 
 @api.route('/auths', methods=['GET'])
-@add_auth(name='获取所有权限', module='权限', prefix=__bp__)
+@add_auth(name='获取所有权限', module='权限', uuid=__bp__)
 @role_required
 def get_auths():
     auths = Auth.query.all()
@@ -39,7 +39,7 @@ def get_auths():
 
 
 @api.route('/roles', methods=['POST'])
-@add_auth(name='新建角色', module='角色', prefix=__bp__)
+@add_auth(name='新建角色', module='角色', uuid=__bp__)
 @role_required
 def create_role():
     form = CreateRoleForm().validate_for_api()
@@ -52,7 +52,7 @@ def create_role():
 
 
 @api.route('/roles', methods=['GET'])
-@add_auth(name='获取所有角色', module='角色', prefix=__bp__)
+@add_auth(name='获取所有角色', module='角色', uuid=__bp__)
 @role_required
 def get_roles():
     form = GetRolesForm().validate_for_api()
@@ -66,7 +66,7 @@ def get_roles():
 
 
 @api.route('/roles/<rid>', methods=['PUT'])
-@add_auth(name='更新角色', module='角色', prefix=__bp__)
+@add_auth(name='更新角色', module='角色', uuid=__bp__)
 @role_required
 def update_role(rid):
     form = UpdateRoleForm().validate_for_api()
@@ -82,7 +82,7 @@ def update_role(rid):
 
 
 @api.route('/roles/<int:rid>', methods=['DELETE'])
-@add_auth(name='删除角色', module='角色', prefix=__bp__)
+@add_auth(name='删除角色', module='角色', uuid=__bp__)
 @role_required
 def delete_role(rid):
     role = Role.query.filter_by(id=rid).first()
@@ -106,21 +106,21 @@ def add_user():
 
 
 @api.route('/users', methods=['GET'])
-@add_auth(name='获取所有用户', module='用户', prefix=__bp__)
+@add_auth(name='获取所有用户', module='用户', uuid=__bp__)
 @role_required
 def get_users():
     form = GetUsersForm().validate_for_api()
     limit = form.page_size.data
     offset = form.page.data * limit
-    users = User.query.filter(User.is_admin != True).offset(offset).limit(limit).all()
-    total = db.session.query(func.count(User.id)).filter(User.is_admin != True).scalar()
+    users = User.query.filter(User.is_super != True).offset(offset).limit(limit).all()
+    total = db.session.query(func.count(User.id)).filter(User.is_super != True).scalar()
     total_page = math.ceil(total / limit)
     data = [user.data() for user in users]
     return response(0, 'ok', data=data, total=total, total_page=total_page)
 
 
 @api.route('/password/<uid>', methods=['PUT'])
-@add_auth(name='修改用户密码', module='用户', prefix=__bp__)
+@add_auth(name='修改用户密码', module='用户', uuid=__bp__)
 @role_required
 def modify_user_password(uid):
     form = ModifyPasswordForm().validate_for_api()
@@ -134,7 +134,7 @@ def modify_user_password(uid):
 
 
 @api.route('/users/<uid>', methods=['DELETE'])
-@add_auth(name='删除用户', module='用户', prefix=__bp__)
+@add_auth(name='删除用户', module='用户', uuid=__bp__)
 @role_required
 def delete_user(uid):
     user = User.query.filter_by(id=uid).first()
@@ -146,7 +146,7 @@ def delete_user(uid):
 
 
 @api.route('user/role', methods=['PUT'])
-@add_auth(name='给用户添加角色', module='用户', prefix=__bp__)
+@add_auth(name='给用户添加角色', module='用户', uuid=__bp__)
 @role_required
 def set_user_role():
     form = UserRoleForm().validate_for_api()
@@ -159,7 +159,7 @@ def set_user_role():
 
 
 @api.route('role/auth', methods=['PUT'])
-@add_auth(name='给角色添加权限', module='角色', prefix=__bp__)
+@add_auth(name='给角色添加权限', module='角色', uuid=__bp__)
 @role_required
 def set_role_auth():
     form = RoleAuthForm().validate_for_api()

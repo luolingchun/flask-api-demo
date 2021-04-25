@@ -29,7 +29,7 @@ def init_db():
         user = User()
         user.name = 'super'
         user.password = '123456'
-        user.is_admin = True
+        user.is_super = True
         user.is_active = True
         db.session.add(user)
         db.session.commit()

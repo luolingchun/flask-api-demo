@@ -62,7 +62,7 @@ def modify_password():
 @login_required
 def get_auths():
     current_user = get_current_user()
-    if current_user.is_admin:
+    if current_user.is_super:
         auths = Auth.query.all()
     else:
         roles = current_user.roles.all()
