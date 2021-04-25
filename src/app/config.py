@@ -10,7 +10,7 @@ APP_NAME = 'XXX API接口'
 mode = os.getenv('ENV', 'publish')
 if mode == 'dev':
     # 数据库配置：sqlite
-    DB_URI = "sqlite:////mnt/d/flask_api.db"
+    DB_URI = "sqlite:////flask_api.db"
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 

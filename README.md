@@ -2,7 +2,7 @@
 
 ## 项目初始化
 
-修改`init_project.sh`中的PROJECT_NAME，并执行`init_project.sh`
+执行`init_project.sh PROJECT_NAME`
 
 ## 开发说明
 

@@ -55,8 +55,9 @@ def init_spec(app: Flask):
 
 def create_app():
     from . import config
+    from .openapi import static_folder, template_folder, openapi_bl
     # 创建Flask实例
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
     # 全局配置项
     app.config.from_object(config)
     # openapi文档
@@ -69,4 +70,6 @@ def create_app():
     init_db(app)
     # 注册蓝图
     register_blueprints(app)
+    # 配置openapi文档
+    app.register_blueprint(openapi_bl)
     return app

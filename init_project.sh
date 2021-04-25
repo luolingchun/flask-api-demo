@@ -1,5 +1,5 @@
 
-export PROJECT_NAME=flask_test
+PROJECT_NAME=$1
 
 export DEFAULT_NAME=flask-api-demo
 

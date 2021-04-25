@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/4 15:59
+import os
 
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Server
 
 from app.models import db
-from app.uwsgi import app
+from app.wsgi import app
 
 manager = Manager(app)
 migrate = Migrate(app, db)
@@ -57,7 +58,8 @@ def init_db():
     print('添加普通用户角色成功.')
 
 
-manager.add_command("runserver", Server(use_debugger=True, host='0.0.0.0', port='5000'))
+# manager.add_command("runserver", Server(use_debugger=True, host='0.0.0.0', port='5000'))
+manager.add_command("runserver", Server(use_debugger=True, host='0.0.0.0', port='5000', threaded=True))
 # 数据库迁移
 # 1. python manage.py db init
 # 2. python manage.py db migrate
@@ -65,4 +67,5 @@ manager.add_command("runserver", Server(use_debugger=True, host='0.0.0.0', port=
 manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
+    os.environ['ENV'] = 'dev'  # publish
     manager.run()

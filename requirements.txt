@@ -4,4 +4,4 @@ flask_migrate==2.7.0
 flask_script==2.0.6
 flask_sqlalchemy==2.5.1
 pymysql==1.0.2
-spectree==0.4.2
+spectree==0.4.3

@@ -8,12 +8,10 @@ from app.specs import spec, JsonResponse
 from app.specs.book import QueryBook, CreateBook, RequestHeader
 from app.utils.enums import AuthModule
 from app.utils.jwt_tools import role_required, add_auth, login_required
+from app.utils.response import response
 
 __version__ = '/v1'
 __bp__ = '/book'
-
-from app.utils.response import response
-
 api = Blueprint(__bp__, __name__, url_prefix=__version__ + __bp__)
 
 
