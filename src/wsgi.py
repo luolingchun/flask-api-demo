@@ -1,25 +1,28 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
-# @Time    : 2020/5/4 15:59
-import os
+# @Time    : 2020/5/4 15:53
+import sys
 
-from flask_migrate import Migrate, MigrateCommand
-from flask_script import Manager, Server
+sys.path.insert(0, r"D:\workspace\flask-openapi3")
+print(sys.path)
+from flask.cli import with_appcontext
 
+from app import create_app
 from app.models import db
-from app.wsgi import app
 
-manager = Manager(app)
-migrate = Migrate(app, db)
+app = create_app()
 
 
-@manager.command
+@app.cli.command("test")
 def test():
+    """test flask cli command"""
     print('test')
 
 
-@manager.command
+@app.cli.command("init_db")
+@with_appcontext
 def init_db():
+    """初始化数据库"""
     from app.models.user import User, Auth, Role
     from app.utils.jwt_tools import auths
     user = db.session.query(User).filter_by(name='super').first()
@@ -56,16 +59,3 @@ def init_db():
         db.session.add(role)
         db.session.commit()
     print('添加普通用户角色成功.')
-
-
-# manager.add_command("runserver", Server(use_debugger=True, host='0.0.0.0', port='5000'))
-manager.add_command("runserver", Server(use_debugger=True, host='0.0.0.0', port='5000', threaded=True))
-# 数据库迁移
-# 1. python manage.py db init
-# 2. python manage.py db migrate
-# 3. python manage.py db upgrade
-manager.add_command('db', MigrateCommand)
-
-if __name__ == '__main__':
-    os.environ['ENV'] = 'dev'  # publish
-    manager.run()

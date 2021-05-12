@@ -13,8 +13,9 @@ RUN \
     apt-get update -y && \
     apt-get install -y gcc && \
     \
-    python -m pip install -r /tmp/requirements.txt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com && \
-    python -m pip install supervisor uwsgi -i http://pypi.douban.com/simple --trusted-host pypi.douban.com && \
+    python -m pip install pip && \
+    python -m pip install -r /tmp/requirements.txt && \
+    python -m pip install supervisor uwsgi && \
     \
     echo_supervisord_conf > /etc/supervisord.conf && \
     echo "[include]" >> /etc/supervisord.conf && \

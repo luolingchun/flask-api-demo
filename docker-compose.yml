@@ -10,29 +10,27 @@ services:
       - PROCESSES=4
 
     ports:
-      - "5000:5000"
+      - "2021:2021"
 
     volumes:
       - "/data/flask-api-demo/data:/data/data"
       - "/data/flask-api-demo/log:/data/log"
       - "./:/work/flask-api-demo"
 
-  flask-mysql:
-    image: mysql:5.7.31
-    container_name: flask-mysql
+  flask-postgres:
+    image: postgres:12.6
+    container_name: flask-postgres
     restart: always
-    #privileged: true
+    privileged: true
 
     ports:
-      - "50001:3306"
+      - "20211:3306"
 
     environment:
       # 使用上海时区
       - TZ=Asia/Shanghai
-      - MYSQL_ROOT_PASSWORD=q2p934586ty
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=flask
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=flask
 
     volumes:
-      - /data/flask-api-demo/data/mysql:/var/lib/mysql
+      - /data/flask-api-demo/data/postgres:/var/lib/postgresql/data

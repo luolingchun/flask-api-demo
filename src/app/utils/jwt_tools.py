@@ -4,8 +4,10 @@
 
 from functools import wraps
 
+from flask import make_response
 from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_user, \
     create_access_token, create_refresh_token
+from flask import Response
 
 from app.models import db
 from app.models.user import User
@@ -18,7 +20,7 @@ jwt_manager = JWTManager()
 auths = []
 
 
-def add_auth(name, module, uuid):
+def permission(name, module, uuid):
     """添加权限装饰器"""
 
     def wrapper(func):
