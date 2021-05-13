@@ -4,17 +4,18 @@
 
 """
 采用经典的权限五表设计：
-User        Role        Auth
+User        Role        Permission
   \         /   \        /
    \       /     \      /
-    uer_role     role_auth
+    uer_role     role_permission
 User和Role为多对多关系
 Role和Auth为多对多关系
 """
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app.utils.exceptions import UserNotExistException, PasswordException, ActiveException
+from app.form.user import RegisterModel
+from app.utils.exceptions import PasswordException, ActiveException, UserExistException, EmailExistException
 from . import Base, db
 
 user_role = db.Table(
@@ -23,10 +24,10 @@ user_role = db.Table(
     db.Column('role_id', db.Integer, db.ForeignKey('role.id'), primary_key=True)
 )
 
-role_auth = db.Table(
-    'role_auth',
+role_permission = db.Table(
+    'role_permission',
     db.Column('role_id', db.Integer, db.ForeignKey('role.id'), primary_key=True),
-    db.Column('auth_id', db.Integer, db.ForeignKey('auth.id'), primary_key=True)
+    db.Column('permission_id', db.Integer, db.ForeignKey('permission.id'), primary_key=True)
 )
 
 
@@ -36,7 +37,7 @@ class User(Base):
     email = db.Column(db.String(32), unique=True, nullable=True, comment='邮箱')
     is_super = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment='是否是超级管理员')
     is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment='是否激活')
-    _password = db.Column('password', db.String(100), comment='密码')
+    _password = db.Column('password', db.Text, comment='密码')
 
     roles = db.relationship('Role', secondary=user_role, back_populates="users")
 
@@ -53,7 +54,9 @@ class User(Base):
             return False
         return check_password_hash(self._password, raw)
 
-    def modify_password(self, old_password=None, new_password=None, admin=False):
+    def modify_password(self, old_password=None, new_password=None, confirm_password=None, admin=False):
+        if new_password != confirm_password:
+            raise PasswordException(message="密码不一致")
         if admin:
             self.password = new_password
             db.session.commit()
@@ -64,15 +67,16 @@ class User(Base):
             return True
         raise PasswordException(message='原始密码错误')
 
-    @staticmethod
-    def create(form):
+    @classmethod
+    def create(cls, model: RegisterModel):
+        cls.verify_register(model)
         user = User()
-        user.name = form.name.data
-        user.password = form.password.data
-        if form.email.data:
-            user.email = form.email.data
+        user.username = model.username
+        user.password = model.password
+        user.email = model.email
+
         # 添加默认角色
-        role_ids = form.role_ids.data if form.role_ids.data else [1]
+        role_ids = model.role_ids if model.role_ids else [1]
         user.roles = Role.query.filter(Role.id.in_(role_ids)).all()
         db.session.add(user)
         db.session.commit()
@@ -87,13 +91,22 @@ class User(Base):
         }
 
     @classmethod
-    def verify(cls, username, password):
+    def verify_register(cls, model: RegisterModel):
+        if db.session.query(cls).filter(cls.username == model.username).first():
+            raise UserExistException(message="用户名不可用")
+        if db.session.query(cls).filter(cls.email == model.email).first():
+            raise EmailExistException()
+        if model.password != model.confirm_password:
+            raise PasswordException(message="密码不一致")
+
+    @classmethod
+    def verify_login(cls, username, password):
         """验证用户名密码"""
         user = db.session.query(cls).filter(cls.username == username).first()
         if user is None:
-            raise UserNotExistException()
+            raise PasswordException(message="用户名或密码错误")
         if not user.check_password(password):
-            raise PasswordException()
+            raise PasswordException(message="用户名或密码错误")
         if not user.is_active:
             raise ActiveException()
         return user
@@ -103,17 +116,17 @@ class Role(Base):
     name = db.Column(db.String(32), unique=True, comment='角色名称')
     describe = db.Column(db.String(255), comment='角色描述')
 
-    users = db.relationship('Role', secondary=user_role, back_populates="roles")
-    auths = db.relationship('Auth', secondary=role_auth, back_populates="roles")
+    users = db.relationship('User', secondary=user_role, back_populates="roles")
+    permissions = db.relationship('Permission', secondary=role_permission, back_populates="roles")
 
     @staticmethod
-    def create(name, describe, auth_ids):
+    def create(name, describe, permission_ids):
         role = Role()
         role.name = name
         role.describe = describe
 
-        if auth_ids:
-            role.auths = db.session.query(Auth).filter(Auth.id.in_(auth_ids)).all()
+        if permission_ids:
+            role.permissions = db.session.query(Permission).filter(Permission.id.in_(permission_ids)).all()
         db.session.add(role)
         db.session.commit()
 
@@ -122,16 +135,20 @@ class Role(Base):
             'id': self.id,
             'name': self.name,
             'describe': self.describe,
-            'auths': [auth.data() for auth in self.auths]
+            'permissions': [permission.data() for permission in self.permissions]
         }
 
 
-class Auth(Base):
+class Permission(Base):
     name = db.Column(db.String(32), unique=True, comment='权限名称')
     module = db.Column(db.String(32), comment='权限模块')
     uuid = db.Column(db.String(255), unique=True, comment='权限uuid')
 
-    roles = db.relationship('Auth', secondary=role_auth, back_populates="auths")
+    roles = db.relationship('Role', secondary=role_permission, back_populates="permissions")
 
     def data(self):
-        return {'id': self.id, 'name': self.name, 'module': self.module}
+        return {
+            'id': self.id,
+            'name': self.name,
+            'module': self.module
+        }

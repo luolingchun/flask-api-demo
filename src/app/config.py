@@ -4,12 +4,16 @@
 import os
 from datetime import timedelta
 
+# -------------------APP基础配置-------------------
 APP_NAME = "Flask API"
 APP_VERSION = "1.0.0"
 API_PREFIX = '/api'
+# -------------------APP基础配置-------------------
+
+
 # -------------------数据库配置-------------------
 # 数据库配置：postgre
-PG_USER = os.getenv("PG_USER", "root")
+PG_USER = os.getenv("PG_USER", "postgres")
 PG_PASSWORD = os.getenv("PG_PASSWORD", "123456")
 PG_DB = os.getenv("PG_DB", "flask")
 PG_HOST = os.getenv("PG_HOST", "flask-postgres")
@@ -22,6 +26,7 @@ SQLALCHEMY_DATABASE_URI = DB_URI
 
 
 # -------------------JWT-------------------
+JWT = [{"jwt": []}]
 JWT_SECRET_KEY = "hard to guess"
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)  # 过期时间
 JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)

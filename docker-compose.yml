@@ -8,14 +8,15 @@ services:
 
     environment:
       - PROCESSES=4
+      - HTTP_TIMEOUT=60
 
     ports:
-      - "2021:2021"
+      - "2021:5000"
 
     volumes:
       - "/data/flask-api-demo/data:/data/data"
       - "/data/flask-api-demo/log:/data/log"
-      - "./:/work/flask-api-demo"
+      - "./:/work"
 
   flask-postgres:
     image: postgres:12.6
@@ -24,7 +25,7 @@ services:
     privileged: true
 
     ports:
-      - "20211:3306"
+      - "20211:5432"
 
     environment:
       # 使用上海时区

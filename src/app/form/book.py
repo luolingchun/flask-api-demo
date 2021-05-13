@@ -12,5 +12,4 @@ class CreateBook(BaseModel):
 
 
 class QueryBook(BaseModel):
-    page: int = Field(default=1, ge=1, description='页码')
-    page_size: int = Field(default=15, ge=1, description='每页个数')
+    bid: int = Field(..., description='图书id')

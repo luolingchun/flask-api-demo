@@ -4,28 +4,25 @@
 
 from functools import wraps
 
-from flask import make_response
-from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_user, \
-    create_access_token, create_refresh_token
-from flask import Response
+from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_user, create_access_token, \
+    create_refresh_token
 
 from app.models import db
 from app.models.user import User
-from app.utils.exceptions import AuthException, InvalidTokenException, UserNotExistException, \
-    ExpiredTokenException
+from app.utils.exceptions import AuthException, InvalidTokenException, UserNotExistException, ExpiredTokenException
 
 jwt_manager = JWTManager()
 
 # 存放所有权限，数据库初始化时使用
-auths = []
+permissions = []
 
 
 def permission(name, module, uuid):
     """添加权限装饰器"""
 
     def wrapper(func):
-        global auths
-        auths.append([name, module, uuid])
+        global permissions
+        permissions.append([name, module, uuid])
         setattr(func, 'uuid', uuid)
         return func
 
@@ -40,7 +37,7 @@ def super_required(fn):
         verify_jwt_in_request()
         current_user = get_current_user()
         if not current_user.is_super:
-            raise AuthException(message='权限不足')
+            return AuthException(message='权限不足')
         return fn(*args, **kwargs)
 
     return wrapper
@@ -60,7 +57,7 @@ def role_required(fn):
         if is_user_allowed(user, fn.uuid):
             return fn(*args, **kwargs)
         else:
-            raise AuthException(message='权限不足')
+            return AuthException(message='权限不足')
 
     return wrapper
 
@@ -77,10 +74,10 @@ def login_required(fn):
 
 
 @jwt_manager.user_lookup_loader
-def user_lookup_loader_callback(identity):
-    user = db.session.query(User).filter_by(id=identity['uid']).first()
+def user_lookup_loader_callback(_, jwt_payload):
+    user = db.session.query(User).filter_by(id=jwt_payload['uid']).first()
     if user is None:
-        raise UserNotExistException()
+        return UserNotExistException()
     return user
 
 
@@ -120,6 +117,6 @@ def is_user_allowed(user, uuid):
     if user.is_super:
         return True
     roles = user.roles.all()
-    uuid_list = [auth.uuid for role in roles for auth in role.auths.all()]
+    uuid_list = [p.uuid for role in roles for p in role.permissions.all()]
 
     return uuid in uuid_list

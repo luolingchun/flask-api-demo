@@ -4,7 +4,7 @@
 from enum import Enum
 
 
-class PermissionGroup(Enum):
+class PermissionGroup(str, Enum):
     USER = '用户'
     ROLE = '角色'
     BOOK = '图书'

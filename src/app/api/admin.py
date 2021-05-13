@@ -9,7 +9,7 @@ from sqlalchemy import func
 
 
 from app.models import db
-from app.models.user import User, Role, Auth
+from app.models.user import User, Role, Permission
 from app.utils.exceptions import UserNotExistException, RoleExistException, RoleNotExistException, RoleHasUserException, \
     UserExistException
 from app.utils.jwt_tools import super_required, permission, role_required
@@ -20,11 +20,11 @@ __bp__ = '/admin'
 api = Blueprint(__bp__, __name__, url_prefix=__version__ + __bp__)
 
 
-@api.route('/auths', methods=['GET'])
+@api.route('/permissions', methods=['GET'])
 @permission(name='获取所有权限', module='权限', uuid=__bp__)
 @role_required
 def get_auths():
-    auths = Auth.query.all()
+    auths = Permission.query.all()
     data = {}
     for auth in auths:
         auth_data = auth.data()
@@ -166,6 +166,6 @@ def set_role_auth():
     role = Role.query.filter_by(id=form.role_id.data).first()
     if not role:
         raise RoleNotExistException()
-    role.auths = Auth.query.filter(Auth.id.in_(form.auth_ids.data)).all()
+    role.permissions = Permission.query.filter(Permission.id.in_(form.auth_ids.data)).all()
     db.session.commit()
     return response(0, 'ok')

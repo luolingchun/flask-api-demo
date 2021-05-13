@@ -1,5 +1,8 @@
-flask==1.1.2
-Flask-JWT-Extended==4.2.0
-flask_migrate==2.7.0
-flask_sqlalchemy==2.5.1
-python-dotenv
+flask>=1.0.0
+Flask-JWT-Extended>=4.0.0
+Flask-Migrate>=2.7.0
+Flask-SQLAlchemy>=2.5.1
+flask-openapi3>=0.9.0
+pydantic[email]==1.8.2
+python-dotenv>=0.17.1
+psycopg2-binary>=2.8.6

@@ -13,7 +13,7 @@ RUN \
     apt-get update -y && \
     apt-get install -y gcc && \
     \
-    python -m pip install pip && \
+    python -m pip install -U pip && \
     python -m pip install -r /tmp/requirements.txt && \
     python -m pip install supervisor uwsgi && \
     \
@@ -25,17 +25,15 @@ RUN \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf ~/.cache/pip/*
 
-# 系统环境变量
-ARG PROJECT_NAME
 
 # 工作空间
-WORKDIR /work/$PROJECT_NAME/src
+WORKDIR /work/src
 
 # 程序部署
-COPY bin /work/$PROJECT_NAME/bin
-COPY src /work/$PROJECT_NAME/src
-COPY conf/uwsgi.ini /work/$PROJECT_NAME/conf/uwsgi.ini
-COPY conf/supervisor.ini /etc/supervisord.d/$PROJECT_NAME.ini
+COPY bin /work/bin
+COPY src /work/src
+COPY conf/uwsgi.ini /work/conf/uwsgi.ini
+COPY conf/supervisor.ini /etc/supervisord.d/supervisor.ini
 
 
 ENTRYPOINT ["supervisord", "-n","-c", "/etc/supervisord.conf"]
