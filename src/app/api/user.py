@@ -22,6 +22,7 @@ tag = Tag(name=__version__ + __bp__, description="用户")
 
 @api.post('/register', tags=[tag])
 def register(json: RegisterModel):
+    """用户注册"""
     # 用户注册时默认没有角色
     json.role_ids = []
     User.create(json)
@@ -30,6 +31,7 @@ def register(json: RegisterModel):
 
 @api.post('/login', tags=[tag])
 def login(json: LoginModel):
+    """用户登录"""
     user = User.verify_login(json.username, json.password)
     access_token, refresh_token = get_token(user)
     return response(data={"access_token": access_token, "refresh_token": refresh_token})
@@ -38,6 +40,7 @@ def login(json: LoginModel):
 @api.get('/info', tags=[tag], responses={"200": UserInfo}, security=JWT)
 @login_required
 def get_info():
+    """获取用户信息"""
     user = get_current_user()
     data = {
         'username': user.username,
@@ -49,6 +52,7 @@ def get_info():
 @api.put('/password', tags=[tag], security=JWT)
 @login_required
 def modify_password(json: PasswordModel):
+    """修改密码"""
     user = get_current_user()
     user.modify_password(json.old_password, json.new_password, json.confirm_password)
     return response()
@@ -57,6 +61,7 @@ def modify_password(json: PasswordModel):
 @api.get('/permissions', tags=[tag], security=JWT)
 @login_required
 def get_permissions():
+    """获取用户权限"""
     user = get_current_user()
     if user.is_super:
         permissions = db.session.query(Permission).all()

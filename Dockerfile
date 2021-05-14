@@ -30,7 +30,6 @@ RUN \
 WORKDIR /work/src
 
 # 程序部署
-COPY bin /work/bin
 COPY src /work/src
 COPY conf/uwsgi.ini /work/conf/uwsgi.ini
 COPY conf/supervisor.ini /etc/supervisord.d/supervisor.ini

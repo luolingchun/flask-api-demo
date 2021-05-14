@@ -12,7 +12,7 @@ API_PREFIX = '/api'
 
 
 # -------------------数据库配置-------------------
-# 数据库配置：postgre
+# 数据库配置：postgres
 PG_USER = os.getenv("PG_USER", "postgres")
 PG_PASSWORD = os.getenv("PG_PASSWORD", "123456")
 PG_DB = os.getenv("PG_DB", "flask")
@@ -31,3 +31,12 @@ JWT_SECRET_KEY = "hard to guess"
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)  # 过期时间
 JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
 # -------------------JWT-------------------
+
+
+# -------------------数据路径-------------------
+DATA_PREFIX = '/data/data'
+FILE_PATH = os.path.join(DATA_PREFIX, 'files')
+for d in [FILE_PATH]:
+    if not os.path.exists(d):
+        os.makedirs(d)
+# -------------------数据路径-------------------

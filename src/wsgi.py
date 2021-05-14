@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/4 15:53
+from flask import redirect, url_for
 from flask.cli import with_appcontext
 from flask_migrate import Migrate
 
@@ -10,6 +11,12 @@ from app.models import db
 app = create_app()
 
 migrate = Migrate(app, db)
+
+
+@app.route('/')
+def index():
+    """根目录重定向到openapi"""
+    return redirect(url_for('openapi.index'))
 
 
 @app.cli.command("test")

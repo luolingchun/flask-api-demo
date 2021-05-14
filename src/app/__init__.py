@@ -31,9 +31,11 @@ def register_apis(app: OpenAPI):
     from app.api.user import api as user_api
     # from app.api.admin import api as admin_api
     from app.api.book import api as book_api
+    from app.api.file import api as file_api
     app.register_api(user_api)
     # app.register_blueprint(admin_api)
     app.register_api(book_api)
+    app.register_api(file_api)
 
 
 def init_jwt(app: OpenAPI):

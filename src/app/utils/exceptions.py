@@ -112,4 +112,12 @@ class RoleNotExistException(BaseAPIException):
 class RoleHasUserException(BaseAPIException):
     error_code = 3003
     message = "角色下存在用户，不可删除"
+
+
 # -------------角色-------------
+
+# -------------文件-------------
+class FileNotExistException(BaseAPIException):
+    error_code = 4001
+    message = "文件不存在"
+# -------------文件-------------
