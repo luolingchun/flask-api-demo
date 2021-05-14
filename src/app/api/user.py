@@ -6,7 +6,7 @@ from flask_openapi3 import APIBlueprint
 from flask_openapi3.models import Tag
 
 from app.config import JWT, API_PREFIX
-from app.form.user import RegisterModel, LoginModel, PasswordModel, UserInfo
+from app.form.user import RegisterModel, LoginModel, PasswordModel, UserInfoResponse
 from app.models import db
 from app.models.user import User, Permission
 from app.utils.jwt_tools import get_token, login_required
@@ -37,7 +37,7 @@ def login(json: LoginModel):
     return response(data={"access_token": access_token, "refresh_token": refresh_token})
 
 
-@api.get('/info', tags=[tag], responses={"200": UserInfo}, security=JWT)
+@api.get('/info', tags=[tag], responses={"200": UserInfoResponse}, security=JWT)
 @login_required
 def get_info():
     """获取用户信息"""

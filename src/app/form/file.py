@@ -11,4 +11,4 @@ class UploadFile(BaseModel):
 
 
 class DownloadFile(BaseModel):
-    filename: str = Field(None, description="文件类型")
+    filename: str = Field(None, description="文件名称")

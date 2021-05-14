@@ -33,5 +33,5 @@ class UserData(BaseModel):
     email: EmailStr = Field(..., description="邮箱")
 
 
-class UserInfo(JsonResponse):
+class UserInfoResponse(JsonResponse):
     data: UserData

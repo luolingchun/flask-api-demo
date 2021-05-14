@@ -35,3 +35,9 @@ services:
 
     volumes:
       - /data/flask-api-demo/data/postgres:/var/lib/postgresql/data
+
+
+networks:
+  default:
+    external:
+      name: flask

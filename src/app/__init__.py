@@ -29,11 +29,11 @@ def init_exception(app: OpenAPI):
 def register_apis(app: OpenAPI):
     """注册API蓝图"""
     from app.api.user import api as user_api
-    # from app.api.admin import api as admin_api
+    from app.api.admin import api as admin_api
     from app.api.book import api as book_api
     from app.api.file import api as file_api
     app.register_api(user_api)
-    # app.register_blueprint(admin_api)
+    app.register_api(admin_api)
     app.register_api(book_api)
     app.register_api(file_api)
 
@@ -48,7 +48,6 @@ def init_db(app: OpenAPI):
     """初始化数据库"""
     from app.models import db
     db.init_app(app)
-    # db.create_all(app=app)
 
 
 def create_app():
@@ -67,6 +66,6 @@ def create_app():
     init_jwt(app)
     # 初始化数据库
     init_db(app)
-    # 注册蓝图
+    # 注册API蓝图
     register_apis(app)
     return app

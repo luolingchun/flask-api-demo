@@ -9,12 +9,14 @@
 1. 修改`build.sh`和`docker-compose.yml`中镜像版本，执行`build.sh`构建镜像
 2. 执行`docker-compose up -d`启动容器
 3. 执行`docker exec -it flask-api-demo bash`进入容器
-4. 执行`supervisorctl stop app`停止服务，并执行`flask run`进入开发者模式
-5. 重新执行第一步发布镜像
+4. 执行`supervisorctl stop app`停止服务，并执行`python wsgi.py`进入开发者模式
+5. 在`CHANGELOG.md`中记录版本日志，重新执行第一步发布镜像
 
 ## 部署说明
 
-1. 准备`docker-compose.yml`, 删除源码挂载：`- "./:/work"`
+0. 创建`flask`网络：`docker network create flask`
+
+1. 准备`docker-compose.yml`, 注释源码挂载：`- "./:/work"`
 
 2. 启动服务：`docker-compose up -d`
 
