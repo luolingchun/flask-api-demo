@@ -60,12 +60,12 @@ class User(Base):
         if admin:
             self.password = new_password
             db.session.commit()
-            return True
+            return
         if self.check_password(old_password):
             self.password = new_password
             db.session.commit()
-            return True
-        raise PasswordException(message='原始密码错误')
+        else:
+            raise PasswordException(message='原始密码错误')
 
     @classmethod
     def create(cls, model: RegisterModel):
@@ -86,6 +86,7 @@ class User(Base):
             'id': self.id,
             'username': self.username,
             'fullname': self.fullname,
+            'email': self.email,
             'is_active': self.is_active,
             'roles': [role.data() for role in self.roles]
         }

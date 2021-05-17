@@ -47,7 +47,7 @@ def init_db():
     for name, module, uuid in permissions:
         permission = db.session.query(Permission).filter_by(name=name).first()
         if permission:
-            print(permission, "is exists.")
+            print(name, module, uuid, "is exists.")
             continue
         permission = Permission()
         permission.name = name

@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/17 15:24
-import math
 
 from flask_openapi3 import APIBlueprint
 from flask_openapi3.models import Tag
-from sqlalchemy import func
+from sqlalchemy import and_
 
 from app.config import API_PREFIX, JWT
-from app.form.admin import PermissionsResponse
-from app.models import db
-from app.models.user import User, Role, Permission
+from app.form.admin import PermissionsResponse, GetUsersModel, GetUsersResponse, ModifyPasswordModel, \
+    UserPathModel, CreateRoleModel, GetRolesModel, GetRolesResponse, RolePathModel, UpdateRoleModel, UserRoleModel, \
+    RolePermissionModel
+from app.form.user import RegisterModel
+from app.models import db, get_offset_limit, get_total_page
+from app.models.user import User, Permission, Role
 from app.utils.enums import PermissionGroup
-from app.utils.exceptions import UserNotExistException, RoleExistException, RoleNotExistException, RoleHasUserException, \
-    UserExistException
+from app.utils.exceptions import UserExistException, UserNotExistException, RoleExistException, RoleNotExistException, \
+    RoleHasUserException
 from app.utils.jwt_tools import permission, role_required
 from app.utils.response import response
 
@@ -28,6 +30,7 @@ tag = Tag(name=__bp__, description="管理员")
 @permission(name='获取所有权限', module=PermissionGroup.PERMISSION, uuid='913aa468-634d-42d4-8a75-6d0ed16723fb')
 @role_required
 def get_permissions():
+    """获取所有权限"""
     permissions = db.session.query(Permission).all()
     data = {}
     for p in permissions:
@@ -42,134 +45,134 @@ def get_permissions():
     return response(data=data)
 
 
-# @api.route('/roles', methods=['POST'])
-# @permission(name='新建角色', module='角色', uuid=__bp__)
-# @role_required
-# def create_role():
-#     form = CreateRoleForm().validate_for_api()
-#     role = Role.query.filter_by(name=form.name.data).first()
-#     if role:
-#         raise RoleExistException()
-#     Role.create(name=form.name.data, describe=form.describe.data, auth_ids=form.auth_ids.data)
-#
-#     return response(0, 'ok')
+@api.post('/users', tags=[tag], security=JWT)
+@permission(name='添加用户', module=PermissionGroup.USER, uuid='82f206e8-a172-4e37-adfd-0a39e8a9fb8e')
+@role_required
+def add_user(body: RegisterModel):
+    """添加用户"""
+    user = db.session.query(User).filter(User.username == body.username).first()
+    if user:
+        raise UserExistException()
+    User.create(body)
+    return response()
 
 
-# @api.route('/roles', methods=['GET'])
-# @permission(name='获取所有角色', module='角色', uuid=__bp__)
-# @role_required
-# def get_roles():
-#     form = GetRolesForm().validate_for_api()
-#     limit = form.page_size.data
-#     offset = form.page.data * limit
-#     roles = Role.query.filter().offset(offset).limit(limit).all()
-#     total = db.session.query(func.count(Role.id)).filter().scalar()
-#     total_page = math.ceil(total / limit)
-#     data = [role.data() for role in roles]
-#     return response(0, 'ok', data=data, total=total, total_page=total_page)
-#
-#
-# @api.route('/roles/<rid>', methods=['PUT'])
-# @permission(name='更新角色', module='角色', uuid=__bp__)
-# @role_required
-# def update_role(rid):
-#     form = UpdateRoleForm().validate_for_api()
-#     role = Role.query.filter_by(id=rid).first()
-#     if role is None:
-#         raise RoleNotExistException()
-#     if Role.query.filter_by(name=form.name.data).first():
-#         raise RoleExistException(message='角色名称重复')
-#     role.name = form.name.data
-#     role.describe = form.describe.data
-#     db.session.commit()
-#     return response(0, 'ok', data=role.data())
-#
-#
-# @api.route('/roles/<int:rid>', methods=['DELETE'])
-# @permission(name='删除角色', module='角色', uuid=__bp__)
-# @role_required
-# def delete_role(rid):
-#     role = Role.query.filter_by(id=rid).first()
-#     if role is None:
-#         raise RoleNotExistException()
-#     if role.users.all():
-#         raise RoleHasUserException()
-#     db.session.delete(role)
-#     db.session.commit()
-#     return response(0, 'ok')
-#
-#
-# @api.route('/user', methods=['POST'])
-# def add_user():
-#     form = AddUserForm().validate_for_api()
-#     user = User.query.filter_by(name=form.name.data).first()
-#     if user:
-#         raise UserExistException()
-#     User.create(form)
-#     return response(0, 'ok')
-#
-#
-# @api.route('/users', methods=['GET'])
-# @permission(name='获取所有用户', module='用户', uuid=__bp__)
-# @role_required
-# def get_users():
-#     form = GetUsersForm().validate_for_api()
-#     limit = form.page_size.data
-#     offset = form.page.data * limit
-#     users = User.query.filter(User.is_super != True).offset(offset).limit(limit).all()
-#     total = db.session.query(func.count(User.id)).filter(User.is_super != True).scalar()
-#     total_page = math.ceil(total / limit)
-#     data = [user.data() for user in users]
-#     return response(0, 'ok', data=data, total=total, total_page=total_page)
-#
-#
-# @api.route('/password/<uid>', methods=['PUT'])
-# @permission(name='修改用户密码', module='用户', uuid=__bp__)
-# @role_required
-# def modify_user_password(uid):
-#     form = ModifyPasswordForm().validate_for_api()
-#
-#     user = User.query.filter_by(id=uid).first()
-#     if user is None:
-#         raise UserNotExistException()
-#
-#     user.modify_password(new_password=form.password.data, admin=True)
-#     return response(0, 'ok')
-#
-#
-# @api.route('/users/<uid>', methods=['DELETE'])
-# @permission(name='删除用户', module='用户', uuid=__bp__)
-# @role_required
-# def delete_user(uid):
-#     user = User.query.filter_by(id=uid).first()
-#     if user is None:
-#         raise UserNotExistException()
-#     db.session.delete(user)
-#     db.session.commit()
-#     return response(0, 'ok')
-#
-#
-# @api.route('user/role', methods=['PUT'])
-# @permission(name='给用户添加角色', module='用户', uuid=__bp__)
-# @role_required
-# def set_user_role():
-#     form = UserRoleForm().validate_for_api()
-#     user = User.query.filter_by(id=form.user_id.data).first()
-#     if not user:
-#         raise UserNotExistException()
-#     user.roles = Role.query.filter(Role.id.in_(form.role_ids.data)).all()
-#     db.session.commit()
-#     return response(0, 'ok')
-#
-#
-# @api.route('role/auth', methods=['PUT'])
-# @permission(name='给角色添加权限', module='角色', uuid=__bp__)
-# @role_required
-# def set_role_auth():
-#     form = RoleAuthForm().validate_for_api()
-#     role = Role.query.filter_by(id=form.role_id.data).first()
-#     if not role:
-#         raise RoleNotExistException()
-#     role.permissions = Permission.query.filter(Permission.id.in_(form.auth_ids.data)).all()
-#     db.session.commit()
-#     return response(0, 'ok')
+@api.get('/users', tags=[tag], security=JWT, responses={"200": GetUsersResponse})
+@permission(name='获取所有用户', module=PermissionGroup.USER, uuid='ad62bda9-b1fb-4229-8b49-1f7acc6cadbc')
+@role_required
+def get_users(query: GetUsersModel):
+    """获取所有用户"""
+    offset, limit = get_offset_limit(query.page, query.page_size)
+    condition = [User.is_super != True]
+    users = db.session.query(User).filter(*condition).offset(offset).limit(limit).all()
+    total, total_page = get_total_page(User, condition, limit)
+    data = [user.data() for user in users]
+    return response(data=data, total=total, total_page=total_page)
+
+
+@api.put('/password/<uid>', tags=[tag], security=JWT)
+@permission(name='修改用户密码', module=PermissionGroup.USER, uuid='4f0d0f12-b552-41dc-8db3-fde11fdb2405')
+@role_required
+def modify_user_password(path: UserPathModel, body: ModifyPasswordModel):
+    """修改用户密码"""
+    user = db.session.query(User).filter(and_(User.id == path.uid, User.is_super != True)).first()
+    if user is None:
+        raise UserNotExistException()
+
+    user.modify_password(new_password=body.password, confirm_password=body.confirm_password, admin=True)
+    return response()
+
+
+@api.delete('/users/<uid>', tags=[tag], security=JWT)
+@permission(name="删除用户", module=PermissionGroup.USER, uuid='6502e822-f3da-4d42-a6de-65321b455178')
+@role_required
+def delete_user(path: UserPathModel):
+    """删除用户"""
+    user = db.session.query(User).filter(and_(User.id == path.uid, User.is_super != True)).first()
+    if user is None:
+        raise UserNotExistException()
+    db.session.delete(user)
+    db.session.commit()
+    return response()
+
+
+@api.post('/roles', tags=[tag], security=JWT)
+@permission(name="新建角色", module=PermissionGroup.ROLE, uuid='4b3ba348-e860-41b6-9d97-fd290e713e76')
+@role_required
+def create_role(body: CreateRoleModel):
+    """新建角色"""
+    role = db.session.query(Role).filter(Role.name == body.name).first()
+    if role:
+        raise RoleExistException()
+    Role.create(name=body.name, describe=body.describe, permission_ids=body.permission_ids)
+
+    return response()
+
+
+@api.get('/roles', tags=[tag], security=JWT, responses={"200": GetRolesResponse})
+@permission(name='获取所有角色', module=PermissionGroup.ROLE, uuid='8abf94aa-b94a-465a-a67b-2e8acba9c59a')
+@role_required
+def get_roles(query: GetRolesModel):
+    """获取所有角色"""
+    offset, limit = get_offset_limit(query.page, query.page_size)
+    roles = db.session.query(Role).offset(offset).limit(limit).all()
+    total, total_page = get_total_page(User, [], limit)
+    data = [role.data() for role in roles]
+    return response(data=data, total=total, total_page=total_page)
+
+
+@api.put('/roles/<rid>', tags=[tag], security=JWT)
+@permission(name='更新角色', module=PermissionGroup.ROLE, uuid='cd0de18c-2147-41b6-88f8-023cef35640d')
+@role_required
+def update_role(path: RolePathModel, body: UpdateRoleModel):
+    """更新角色"""
+    role = db.session.query(Role).filter(Role.id == path.rid).first()
+    if role is None:
+        raise RoleNotExistException()
+    if db.session.query(Role).filter(Role.name == body.name).first():
+        raise RoleExistException(message='角色名称重复')
+    role.name = body.name
+    role.describe = body.describe
+    db.session.commit()
+    return response()
+
+
+@api.delete('/roles/<int:rid>', tags=[tag], security=JWT)
+@permission(name='删除角色', module='角色', uuid='cdb35c5d-f5c9-4ff5-ba6c-5bba8349a176')
+@role_required
+def delete_role(path: RolePathModel):
+    """删除角色"""
+    role = db.session.query(Role).filter(Role.id == path.rid).first()
+    if role is None:
+        raise RoleNotExistException()
+    if role.users:
+        raise RoleHasUserException()
+    db.session.delete(role)
+    db.session.commit()
+    return response()
+
+
+@api.put('users/roles', tags=[tag], security=JWT)
+@permission(name='给用户添加角色', module=PermissionGroup.USER, uuid='a6e4d9c4-6a8c-4095-a4a9-49d7ab2d8790')
+@role_required
+def set_user_role(body: UserRoleModel):
+    """给用户添加角色"""
+    user = db.session.query(User).filter(and_(User.id == body.uid, User.is_super != True)).first()
+    if user is None:
+        raise UserNotExistException()
+    user.roles = db.session.query(Role).filter(Role.id.in_(body.role_ids)).all()
+    db.session.commit()
+    return response()
+
+
+@api.put('roles/auths', tags=[tag], security=JWT)
+@permission(name='给角色添加权限', module=PermissionGroup.ROLE, uuid='376f7d69-cd14-41c2-a4d2-ebdd4ca238bc')
+@role_required
+def set_role_auth(body: RolePermissionModel):
+    """给角色添加权限"""
+    role = db.session.query(Role).filter(Role.id == body.rid).first()
+    if role is None:
+        raise RoleNotExistException()
+    role.permissions = db.session.query(Permission).filter(Permission.id.in_(body.permission_ids)).all()
+    db.session.commit()
+    return response()
