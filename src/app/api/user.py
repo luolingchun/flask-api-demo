@@ -21,18 +21,18 @@ tag = Tag(name=__version__ + __bp__, description="用户")
 
 
 @api.post('/register', tags=[tag])
-def register(json: RegisterModel):
+def register(body: RegisterModel):
     """用户注册"""
     # 用户注册时默认没有角色
-    json.role_ids = []
-    User.create(json)
+    body.role_ids = []
+    User.create(body)
     return response()
 
 
 @api.post('/login', tags=[tag])
-def login(json: LoginModel):
+def login(body: LoginModel):
     """用户登录"""
-    user = User.verify_login(json.username, json.password)
+    user = User.verify_login(body.username, body.password)
     access_token, refresh_token = get_token(user)
     return response(data={"access_token": access_token, "refresh_token": refresh_token})
 
@@ -51,10 +51,10 @@ def get_info():
 
 @api.put('/password', tags=[tag], security=JWT)
 @login_required
-def modify_password(json: PasswordModel):
+def modify_password(body: PasswordModel):
     """修改密码"""
     user = get_current_user()
-    user.modify_password(json.old_password, json.new_password, json.confirm_password)
+    user.modify_password(body.old_password, body.new_password, body.confirm_password)
     return response()
 
 

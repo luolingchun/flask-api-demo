@@ -20,10 +20,10 @@ tag = Tag(name=__version__ + __bp__, description="图书")
 @api.post('', tags=[tag])
 @permission(name='创建图书', module=PermissionGroup.BOOK, uuid='1e1cbdb2-6bdb-4091-91ec-5268fa8f2b73')
 @role_required
-def create_book(json: CreateBook):
+def create_book(body: CreateBook):
     """创建图书"""
-    print(json.name)
-    print(json.author)
+    print(body.name)
+    print(body.author)
     return response()
 
 
