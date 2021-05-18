@@ -23,7 +23,7 @@ __version__ = '/v1'
 __bp__ = '/admin'
 api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__)
 
-tag = Tag(name=__bp__, description="管理员")
+tag = Tag(name=__version__ + __bp__, description="管理员")
 
 
 @api.get('/permissions', tags=[tag], responses={"200": PermissionsResponse}, security=JWT)

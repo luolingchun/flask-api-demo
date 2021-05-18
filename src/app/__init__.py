@@ -32,10 +32,12 @@ def register_apis(app: OpenAPI):
     from app.api.admin import api as admin_api
     from app.api.book import api as book_api
     from app.api.file import api as file_api
+    from app.api.job import api as job_api
     app.register_api(user_api)
     app.register_api(admin_api)
     app.register_api(book_api)
     app.register_api(file_api)
+    app.register_api(job_api)
 
 
 def init_jwt(app: OpenAPI):
@@ -48,6 +50,12 @@ def init_db(app: OpenAPI):
     """初始化数据库"""
     from app.models import db
     db.init_app(app)
+
+
+def init_rq2(app: OpenAPI):
+    """初始化rq2"""
+    from app.rq import rq2
+    rq2.init_app(app)
 
 
 def create_app():
@@ -66,6 +74,8 @@ def create_app():
     init_jwt(app)
     # 初始化数据库
     init_db(app)
+    # 初始化rq2
+    init_rq2(app)
     # 注册API蓝图
     register_apis(app)
     return app

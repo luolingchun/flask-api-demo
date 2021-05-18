@@ -36,6 +36,17 @@ services:
     volumes:
       - /data/flask-api-demo/data/postgres:/var/lib/postgresql/data
 
+  flask-redis:
+    image: redis:6
+    container_name: flask-redis
+    restart: always
+    privileged: true
+
+    ports:
+      - "20212:6379"
+
+    volumes:
+      - /data/flask-api-demo/data/redis:/data
 
 networks:
   default:

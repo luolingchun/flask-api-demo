@@ -116,7 +116,7 @@ def is_user_allowed(user, uuid):
     """判断用户是否有权限"""
     if user.is_super:
         return True
-    roles = user.roles.all()
-    uuid_list = [p.uuid for role in roles for p in role.permissions.all()]
+    roles = user.roles
+    uuid_list = [p.uuid for role in roles for p in role.permissions]
 
     return uuid in uuid_list

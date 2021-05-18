@@ -9,3 +9,4 @@ class PermissionGroup(str, Enum):
     ROLE = '角色'
     PERMISSION = '权限'
     BOOK = '图书'
+    JOB = '任务'

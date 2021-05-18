@@ -29,6 +29,9 @@ RUN \
 # 工作空间
 WORKDIR /work/src
 
+# 添加pythonpath
+ENV PYTHONPATH=/work/src
+
 # 程序部署
 COPY src /work/src
 COPY conf/uwsgi.ini /work/conf/uwsgi.ini

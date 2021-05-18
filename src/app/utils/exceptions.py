@@ -120,4 +120,28 @@ class RoleHasUserException(BaseAPIException):
 class FileNotExistException(BaseAPIException):
     error_code = 4001
     message = "文件不存在"
+
+
 # -------------文件-------------
+
+# -------------任务-------------
+class JobNotExistException(BaseAPIException):
+    error_code = 5001
+    message = "任务不存在"
+
+
+class JobNotRetryException(BaseAPIException):
+    error_code = 5002
+    message = "只能重试执行失败的任务"
+
+
+class JobTypeErrorException(BaseAPIException):
+    error_code = 5003
+    message = "任务类型无效"
+
+
+class OneClickErrorException(BaseAPIException):
+    error_code = 5004
+    message = "一键任务为空"
+
+# -------------任务-------------

@@ -25,6 +25,15 @@ SQLALCHEMY_DATABASE_URI = DB_URI
 # -------------------数据库配置-------------------
 
 
+# -------------------redis数据库配置-------------------
+REDIS_HOST = os.getenv('REDIS_HOST', 'flask-redis')
+REDIS_USER = os.getenv('REDIS_USER', 'redis_user')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', 'redis_password')
+REDIS_PORT = 6379
+RQ_REDIS_DB = 0
+RQ_REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{RQ_REDIS_DB}'
+# -------------------redis数据库配置-------------------
+
 # -------------------JWT-------------------
 JWT = [{"jwt": []}]
 JWT_SECRET_KEY = "hard to guess"

@@ -7,3 +7,4 @@ email-validator>=1.1
 python-dotenv>=0.17
 psycopg2-binary>=2.8
 flask-openapi3>=0.9
+flask_rq2==18.3
