@@ -33,7 +33,7 @@ class BaseAPIException(HTTPException):
             "code": self.error_code,
             "message": self.message,
         }
-        text = json.dumps(body)
+        text = json.dumps(body, ensure_ascii=False)
         return text
 
     def get_headers(self, *args, **kwargs):
