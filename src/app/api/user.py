@@ -14,13 +14,11 @@ from app.utils.response import response
 
 __version__ = '/v1'
 __bp__ = '/user'
-
-api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__)
-
 tag = Tag(name=__version__ + __bp__, description="用户")
+api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__, abp_tags=[tag], abp_security=JWT)
 
 
-@api.post('/register', tags=[tag])
+@api.post('/register')
 def register(body: RegisterModel):
     """用户注册"""
     # 用户注册时默认没有角色
@@ -29,7 +27,7 @@ def register(body: RegisterModel):
     return response()
 
 
-@api.post('/login', tags=[tag])
+@api.post('/login')
 def login(body: LoginModel):
     """用户登录"""
     user = User.verify_login(body.username, body.password)
@@ -37,7 +35,7 @@ def login(body: LoginModel):
     return response(data={"access_token": access_token, "refresh_token": refresh_token})
 
 
-@api.get('/info', tags=[tag], responses={"200": UserInfoResponse}, security=JWT)
+@api.get('/info', responses={"200": UserInfoResponse})
 @login_required
 def get_info():
     """获取用户信息"""
@@ -49,7 +47,7 @@ def get_info():
     return response(data=data)
 
 
-@api.put('/password', tags=[tag], security=JWT)
+@api.put('/password')
 @login_required
 def modify_password(body: PasswordModel):
     """修改密码"""
@@ -58,7 +56,7 @@ def modify_password(body: PasswordModel):
     return response()
 
 
-@api.get('/permissions', tags=[tag], security=JWT)
+@api.get('/permissions')
 @login_required
 def get_permissions():
     """获取用户权限"""

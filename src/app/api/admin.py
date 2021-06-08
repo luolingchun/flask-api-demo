@@ -21,12 +21,11 @@ from app.utils.response import response
 
 __version__ = '/v1'
 __bp__ = '/admin'
-api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__)
-
 tag = Tag(name=__version__ + __bp__, description="管理员")
+api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__, abp_tags=[tag], abp_security=JWT)
 
 
-@api.get('/permissions', tags=[tag], responses={"200": PermissionsResponse}, security=JWT)
+@api.get('/permissions', responses={"200": PermissionsResponse})
 @permission(name='获取所有权限', module=PermissionGroup.PERMISSION, uuid='913aa468-634d-42d4-8a75-6d0ed16723fb')
 @role_required
 def get_permissions():
@@ -45,7 +44,7 @@ def get_permissions():
     return response(data=data)
 
 
-@api.post('/users', tags=[tag], security=JWT)
+@api.post('/users')
 @permission(name='添加用户', module=PermissionGroup.USER, uuid='82f206e8-a172-4e37-adfd-0a39e8a9fb8e')
 @role_required
 def add_user(body: RegisterModel):
@@ -57,7 +56,7 @@ def add_user(body: RegisterModel):
     return response()
 
 
-@api.get('/users', tags=[tag], security=JWT, responses={"200": GetUsersResponse})
+@api.get('/users', responses={"200": GetUsersResponse})
 @permission(name='获取所有用户', module=PermissionGroup.USER, uuid='ad62bda9-b1fb-4229-8b49-1f7acc6cadbc')
 @role_required
 def get_users(query: GetUsersModel):
@@ -70,7 +69,7 @@ def get_users(query: GetUsersModel):
     return response(data=data, total=total, total_page=total_page)
 
 
-@api.put('/password/<uid>', tags=[tag], security=JWT)
+@api.put('/password/<uid>')
 @permission(name='修改用户密码', module=PermissionGroup.USER, uuid='4f0d0f12-b552-41dc-8db3-fde11fdb2405')
 @role_required
 def modify_user_password(path: UserPathModel, body: ModifyPasswordModel):
@@ -83,7 +82,7 @@ def modify_user_password(path: UserPathModel, body: ModifyPasswordModel):
     return response()
 
 
-@api.delete('/users/<uid>', tags=[tag], security=JWT)
+@api.delete('/users/<uid>')
 @permission(name="删除用户", module=PermissionGroup.USER, uuid='6502e822-f3da-4d42-a6de-65321b455178')
 @role_required
 def delete_user(path: UserPathModel):
@@ -96,7 +95,7 @@ def delete_user(path: UserPathModel):
     return response()
 
 
-@api.post('/roles', tags=[tag], security=JWT)
+@api.post('/roles')
 @permission(name="新建角色", module=PermissionGroup.ROLE, uuid='4b3ba348-e860-41b6-9d97-fd290e713e76')
 @role_required
 def create_role(body: CreateRoleModel):
@@ -109,7 +108,7 @@ def create_role(body: CreateRoleModel):
     return response()
 
 
-@api.get('/roles', tags=[tag], security=JWT, responses={"200": GetRolesResponse})
+@api.get('/roles', responses={"200": GetRolesResponse})
 @permission(name='获取所有角色', module=PermissionGroup.ROLE, uuid='8abf94aa-b94a-465a-a67b-2e8acba9c59a')
 @role_required
 def get_roles(query: GetRolesModel):
@@ -121,7 +120,7 @@ def get_roles(query: GetRolesModel):
     return response(data=data, total=total, total_page=total_page)
 
 
-@api.put('/roles/<rid>', tags=[tag], security=JWT)
+@api.put('/roles/<rid>')
 @permission(name='更新角色', module=PermissionGroup.ROLE, uuid='cd0de18c-2147-41b6-88f8-023cef35640d')
 @role_required
 def update_role(path: RolePathModel, body: UpdateRoleModel):
@@ -137,7 +136,7 @@ def update_role(path: RolePathModel, body: UpdateRoleModel):
     return response()
 
 
-@api.delete('/roles/<int:rid>', tags=[tag], security=JWT)
+@api.delete('/roles/<int:rid>')
 @permission(name='删除角色', module='角色', uuid='cdb35c5d-f5c9-4ff5-ba6c-5bba8349a176')
 @role_required
 def delete_role(path: RolePathModel):
@@ -152,7 +151,7 @@ def delete_role(path: RolePathModel):
     return response()
 
 
-@api.put('users/roles', tags=[tag], security=JWT)
+@api.put('users/roles')
 @permission(name='给用户添加角色', module=PermissionGroup.USER, uuid='a6e4d9c4-6a8c-4095-a4a9-49d7ab2d8790')
 @role_required
 def set_user_role(body: UserRoleModel):
@@ -165,7 +164,7 @@ def set_user_role(body: UserRoleModel):
     return response()
 
 
-@api.put('roles/auths', tags=[tag], security=JWT)
+@api.put('roles/auths')
 @permission(name='给角色添加权限', module=PermissionGroup.ROLE, uuid='376f7d69-cd14-41c2-a4d2-ebdd4ca238bc')
 @role_required
 def set_role_auth(body: RolePermissionModel):

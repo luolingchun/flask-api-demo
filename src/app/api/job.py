@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/10/10 10:28
-__version__ = '/v1'
-__bp__ = '/job'
-
 import math
 from datetime import timedelta
 from uuid import uuid1
@@ -24,11 +21,13 @@ from app.utils.exceptions import JobNotExistException, JobNotRetryException
 from app.utils.jwt_tools import role_required, permission
 from app.utils.response import response
 
-api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__)
+__version__ = '/v1'
+__bp__ = '/job'
 tag = Tag(name=__version__ + __bp__, description="用户")
+api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__, abp_tags=[tag], abp_security=JWT)
 
 
-@api.post('', tags=[tag], security=JWT)
+@api.post('')
 @permission(name='添加异步任务', module=PermissionGroup.JOB, uuid='26017994-9c06-11eb-84be-8cec4baea5d8')
 # @role_required
 def add_job():
@@ -38,7 +37,7 @@ def add_job():
     return response(data=job_id)
 
 
-@api.get('', tags=[tag], security=JWT, responses={"200": QueryJobResponse})
+@api.get('', responses={"200": QueryJobResponse})
 @permission(name='查询异步任务', module=PermissionGroup.JOB, uuid='46ffb3d9-9c06-11eb-981b-8cec4baea5d8')
 # @role_required
 def query_job(query: QueryJob):
@@ -106,7 +105,7 @@ def query_job(query: QueryJob):
     return response(data=job_attributes[offset:(offset + page_size)], total=total, total_page=total_page)
 
 
-@api.delete('/<job_id>', tags=[tag], security=JWT)
+@api.delete('/<job_id>')
 @permission(name='删除异步任务', module=PermissionGroup.JOB, uuid='4e440bab-9c06-11eb-8b14-8cec4baea5d8')
 # @role_required
 def del_job(path: PathJob):
@@ -120,7 +119,7 @@ def del_job(path: PathJob):
         raise JobNotExistException()
 
 
-@api.put('/<job_id>', tags=[tag], security=JWT)
+@api.put('/<job_id>')
 @permission(name='重试异步任务', module=PermissionGroup.JOB, uuid='54f0ed18-9c06-11eb-9220-8cec4baea5d8')
 @role_required
 def retry_job(path: PathJob):
