@@ -32,6 +32,7 @@ role_permission = db.Table(
 
 
 class User(Base):
+    __tablename__ = 'user'
     username = db.Column(db.String(32), unique=True, nullable=False, comment='用户名')
     fullname = db.Column(db.String(32), unique=False, nullable=False, default='', comment='姓名')
     email = db.Column(db.String(32), unique=True, nullable=True, comment='邮箱')
@@ -114,6 +115,7 @@ class User(Base):
 
 
 class Role(Base):
+    __tablename__ = 'role'
     name = db.Column(db.String(32), unique=True, comment='角色名称')
     describe = db.Column(db.String(255), comment='角色描述')
 
@@ -141,6 +143,7 @@ class Role(Base):
 
 
 class Permission(Base):
+    __tablename__ = 'permission'
     name = db.Column(db.String(32), unique=True, comment='权限名称')
     module = db.Column(db.String(32), comment='权限模块')
     uuid = db.Column(db.String(255), unique=True, comment='权限uuid')

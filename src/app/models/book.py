@@ -5,5 +5,6 @@ from . import Base, db
 
 
 class Book(Base):
+    __tablename__ = 'book'
     name = db.Column(db.String(32), comment="名称")
     author = db.Column(db.String(4), comment="作者")
