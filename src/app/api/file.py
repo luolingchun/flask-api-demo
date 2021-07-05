@@ -13,9 +13,9 @@ from app.utils.exceptions import FileNotExistException
 
 __version__ = '/v1'
 __bp__ = '/file'
-
-tag = Tag(name=__version__ + __bp__, description="文件")
-api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__, abp_tags=[tag])
+url_prefix = API_PREFIX + __version__ + __bp__
+tag = Tag(name="文件", description="文件管理")
+api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag])
 
 
 @api.post('/upload')

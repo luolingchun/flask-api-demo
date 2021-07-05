@@ -12,8 +12,9 @@ from app.utils.response import response
 
 __version__ = '/v1'
 __bp__ = '/book'
-tag = Tag(name=__version__ + __bp__, description="图书")
-api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__, abp_tags=[tag])
+url_prefix = API_PREFIX + __version__ + __bp__
+tag = Tag(name="图书", description="图书管理")
+api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag])
 
 
 @api.post('')

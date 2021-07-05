@@ -14,8 +14,9 @@ from app.utils.response import response
 
 __version__ = '/v1'
 __bp__ = '/user'
-tag = Tag(name=__version__ + __bp__, description="用户")
-api = APIBlueprint(__bp__, __name__, url_prefix=API_PREFIX + __version__ + __bp__, abp_tags=[tag], abp_security=JWT)
+url_prefix = API_PREFIX + __version__ + __bp__
+tag = Tag(name="用户", description="用户注册、登录、个人管理")
+api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
 
 
 @api.post('/register')
