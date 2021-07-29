@@ -10,6 +10,11 @@ COPY requirements.txt /tmp/requirements.txt
 
 # 基础环境安装
 RUN \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib non-free">> /etc/apt/sources.list  && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-backports main contrib non-free">> /etc/apt/sources.list  && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib non-free">> /etc/apt/sources.list  && \
+    \
     apt-get update -y && \
     apt-get install -y gcc && \
     \
@@ -21,7 +26,15 @@ RUN \
     echo "[include]" >> /etc/supervisord.conf && \
     echo "files = /etc/supervisord.d/*.ini" >> /etc/supervisord.conf && \
     \
-    apt-get purge -y gcc && \
+    find /usr/local -type f -executable -exec ldd '{}' ';' \
+    | awk '/=>/ { print $(NF-1) }' \
+    | sort -u \
+    | xargs -r dpkg-query --search \
+    | cut -d: -f1 \
+    | sort -u \
+    | xargs -r apt-mark manual \
+    ; \
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf ~/.cache/pip/*
 
