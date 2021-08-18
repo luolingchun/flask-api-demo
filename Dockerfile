@@ -1,4 +1,4 @@
-FROM python:3.8-slim-buster
+FROM python:3.9-slim-bullseye
 
 MAINTAINER LLC
 
@@ -10,13 +10,13 @@ COPY requirements.txt /tmp/requirements.txt
 
 # 基础环境安装
 RUN \
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-updates main contrib non-free">> /etc/apt/sources.list  && \
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-backports main contrib non-free">> /etc/apt/sources.list  && \
-    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib non-free">> /etc/apt/sources.list  && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free">> /etc/apt/sources.list  && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-backports main contrib non-free">> /etc/apt/sources.list  && \
+    echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bullseye-security main contrib non-free">> /etc/apt/sources.list  && \
     \
-    apt-get update -y && \
-    apt-get install -y gcc && \
+    apt-get update && \
+    apt-get install -y gcc python3-dev --no-install-recommends && \
     \
     python -m pip install -U pip && \
     python -m pip install -r /tmp/requirements.txt && \
@@ -26,15 +26,8 @@ RUN \
     echo "[include]" >> /etc/supervisord.conf && \
     echo "files = /etc/supervisord.d/*.ini" >> /etc/supervisord.conf && \
     \
-    find /usr/local -type f -executable -exec ldd '{}' ';' \
-    | awk '/=>/ { print $(NF-1) }' \
-    | sort -u \
-    | xargs -r dpkg-query --search \
-    | cut -d: -f1 \
-    | sort -u \
-    | xargs -r apt-mark manual \
-    ; \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false && \
+    apt-get purge -y gcc  python3-dev && \
+    apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf ~/.cache/pip/*
 
