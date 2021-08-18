@@ -18,9 +18,9 @@ services:
       - "/data/flask-api-demo/log:/data/log"
       - "./:/work"
 
-  flask-postgres:
+  flask-api-demo-postgres:
     image: postgres:12.6
-    container_name: flask-postgres
+    container_name: flask-api-demo-postgres
     restart: always
     privileged: true
 
@@ -36,9 +36,9 @@ services:
     volumes:
       - /data/flask-api-demo/data/postgres:/var/lib/postgresql/data
 
-  flask-redis:
+  flask-api-demo-redis:
     image: redis:6
-    container_name: flask-redis
+    container_name: flask-api-demo-redis
     restart: always
     privileged: true
 
