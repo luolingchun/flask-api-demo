@@ -5,10 +5,10 @@
 from pydantic import BaseModel, Field
 
 
-class CreateBook(BaseModel):
+class BookBody(BaseModel):
     name: str = Field(..., description='名称')
     author: str = Field(None, description='作者')
 
 
-class QueryBook(BaseModel):
+class BookQuery(BaseModel):
     bid: int = Field(..., description='图书id')

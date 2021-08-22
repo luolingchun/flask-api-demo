@@ -8,7 +8,7 @@ from flask_openapi3 import APIBlueprint
 from flask_openapi3.models import Tag
 
 from app.config import API_PREFIX, FILE_PATH
-from app.form.file import UploadFile, DownloadFile
+from app.form.file import UploadFileForm, DownloadFilePath
 from app.utils.exceptions import FileNotExistException
 
 __version__ = '/v1'
@@ -19,7 +19,7 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag])
 
 
 @api.post('/upload')
-def upload_file(form: UploadFile):
+def upload_file(form: UploadFileForm):
     """上传文件"""
     print(form.file.filename)
     print(form.file_type)
@@ -28,7 +28,7 @@ def upload_file(form: UploadFile):
 
 
 @api.get('/<filename>')
-def download_file(path: DownloadFile):
+def download_file(path: DownloadFilePath):
     """下载文件"""
     file = os.path.join(FILE_PATH, path.filename)
     if os.path.exists(file):
@@ -37,7 +37,7 @@ def download_file(path: DownloadFile):
 
 
 @api.get('/image/<filename>')
-def get_image(path: DownloadFile):
+def get_image(path: DownloadFilePath):
     """获取图片流"""
     image_content = b''
     try:

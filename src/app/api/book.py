@@ -5,7 +5,7 @@ from flask_openapi3 import APIBlueprint
 from flask_openapi3.models import Tag
 
 from app.config import API_PREFIX
-from app.form.book import CreateBook, QueryBook
+from app.form.book import BookBody, BookQuery
 from app.utils.enums import PermissionGroup
 from app.utils.jwt_tools import permission, role_required
 from app.utils.response import response
@@ -20,7 +20,7 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag])
 @api.post('')
 @permission(name='创建图书', module=PermissionGroup.BOOK, uuid='1e1cbdb2-6bdb-4091-91ec-5268fa8f2b73')
 @role_required
-def create_book(body: CreateBook):
+def create_book(body: BookBody):
     """创建图书"""
     print(body.name)
     print(body.author)
@@ -28,14 +28,14 @@ def create_book(body: CreateBook):
 
 
 @api.get('/<int:bid>')
-def get_book(path: QueryBook):
+def get_book(path: BookQuery):
     """查询图书"""
     print(path)
     return response(data=path.bid)
 
 
 @api.delete('/<int:bid>')
-def delete_book(path: QueryBook):
+def delete_book(path: BookQuery):
     """删除图书"""
     print(f"delete {path.bid}")
     return response()

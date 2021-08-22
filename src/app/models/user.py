@@ -14,7 +14,7 @@ Role和Auth为多对多关系
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app.form.user import RegisterModel
+from app.form.user import RegisterBody
 from app.utils.exceptions import PasswordException, ActiveException, UserExistException, EmailExistException
 from . import Base, db
 
@@ -69,7 +69,7 @@ class User(Base):
             raise PasswordException(message='原始密码错误')
 
     @classmethod
-    def create(cls, model: RegisterModel):
+    def create(cls, model: RegisterBody):
         cls.verify_register(model)
         user = User()
         user.username = model.username
@@ -93,7 +93,7 @@ class User(Base):
         }
 
     @classmethod
-    def verify_register(cls, model: RegisterModel):
+    def verify_register(cls, model: RegisterBody):
         if db.session.query(cls).filter(cls.username == model.username).first():
             raise UserExistException(message="用户名不可用")
         if db.session.query(cls).filter(cls.email == model.email).first():

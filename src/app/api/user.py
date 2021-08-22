@@ -6,7 +6,7 @@ from flask_openapi3 import APIBlueprint
 from flask_openapi3.models import Tag
 
 from app.config import JWT, API_PREFIX
-from app.form.user import RegisterModel, LoginModel, PasswordModel, UserInfoResponse
+from app.form.user import RegisterBody, LoginBody, PasswordBody, UserInfoResponse
 from app.models import db
 from app.models.user import User, Permission
 from app.utils.jwt_tools import get_token, login_required
@@ -20,7 +20,7 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_
 
 
 @api.post('/register')
-def register(body: RegisterModel):
+def register(body: RegisterBody):
     """用户注册"""
     # 用户注册时默认没有角色
     body.role_ids = []
@@ -29,7 +29,7 @@ def register(body: RegisterModel):
 
 
 @api.post('/login')
-def login(body: LoginModel):
+def login(body: LoginBody):
     """用户登录"""
     user = User.verify_login(body.username, body.password)
     access_token, refresh_token = get_token(user)
@@ -50,7 +50,7 @@ def get_info():
 
 @api.put('/password')
 @login_required
-def modify_password(body: PasswordModel):
+def modify_password(body: PasswordBody):
     """修改密码"""
     user = get_current_user()
     user.modify_password(body.old_password, body.new_password, body.confirm_password)

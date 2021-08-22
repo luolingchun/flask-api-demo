@@ -10,7 +10,7 @@ from app.config import API_PREFIX, JWT
 from app.form.admin import PermissionsResponse, GetUsersModel, GetUsersResponse, ModifyPasswordModel, \
     UserPathModel, CreateRoleModel, GetRolesModel, GetRolesResponse, RolePathModel, UpdateRoleModel, UserRoleModel, \
     RolePermissionModel
-from app.form.user import RegisterModel
+from app.form.user import RegisterBody
 from app.models import db, get_offset_limit, get_total_page
 from app.models.user import User, Permission, Role
 from app.utils.enums import PermissionGroup
@@ -48,7 +48,7 @@ def get_permissions():
 @api.post('/users')
 @permission(name='添加用户', module=PermissionGroup.USER, uuid='82f206e8-a172-4e37-adfd-0a39e8a9fb8e')
 @role_required
-def add_user(body: RegisterModel):
+def add_user(body: RegisterBody):
     """添加用户"""
     user = db.session.query(User).filter(User.username == body.username).first()
     if user:

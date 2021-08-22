@@ -18,15 +18,15 @@ class JobStatus(str, Enum):
     ALL = "all"
 
 
-class QueryJob(PageModel):
+class JobQuery(PageModel):
     status: JobStatus = Field(..., description='任务状态')
 
 
-class PathJob(BaseModel):
+class JobPath(BaseModel):
     job_id: str = Field(..., description="任务UUID")
 
 
-class QueryJobResponse(BaseModel):
+class JobResponse(BaseModel):
     job_id: str = Field(..., description="UUID")
     args: List[Any] = Field(None, description="参数")
     kwargs: Dict[str, Any] = Field(None, description="关键字参数")

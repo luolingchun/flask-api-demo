@@ -12,7 +12,7 @@ from rq.exceptions import InvalidJobOperation
 from rq.job import Job
 
 from app.config import API_PREFIX, JWT
-from app.form.job import QueryJob, PathJob, QueryJobResponse
+from app.form.job import JobQuery, JobPath, JobResponse
 from app.jobs import job_test
 from app.rq import rq2
 from app.rq.queue import default_queue
@@ -38,10 +38,10 @@ def add_job():
     return response(data=job_id)
 
 
-@api.get('', responses={"200": QueryJobResponse})
+@api.get('', responses={"200": JobResponse})
 @permission(name='查询异步任务', module=PermissionGroup.JOB, uuid='46ffb3d9-9c06-11eb-981b-8cec4baea5d8')
 # @role_required
-def query_job(query: QueryJob):
+def query_job(query: JobQuery):
     """查询异步任务"""
     page = query.page
     page_size = query.page_size
@@ -109,7 +109,7 @@ def query_job(query: QueryJob):
 @api.delete('/<job_id>')
 @permission(name='删除异步任务', module=PermissionGroup.JOB, uuid='4e440bab-9c06-11eb-8b14-8cec4baea5d8')
 # @role_required
-def del_job(path: PathJob):
+def del_job(path: JobPath):
     """任务删除"""
     job = Job.fetch(path.job_id, connection=rq2.connection)
     if job is not None:
@@ -123,7 +123,7 @@ def del_job(path: PathJob):
 @api.put('/<job_id>')
 @permission(name='重试异步任务', module=PermissionGroup.JOB, uuid='54f0ed18-9c06-11eb-9220-8cec4baea5d8')
 @role_required
-def retry_job(path: PathJob):
+def retry_job(path: JobPath):
     """重试异步任务"""
     job = Job.fetch(path.job_id, connection=rq2.connection)
     if job is not None:
