@@ -9,7 +9,7 @@ from flask_openapi3.models import Tag
 
 from app.config import API_PREFIX, FILE_PATH
 from app.form.file import UploadFileForm, DownloadFilePath
-from app.utils.exceptions import FileNotExistException
+from app.utils.exceptions import ResourceNotExistException
 
 __version__ = '/v1'
 __bp__ = '/file'
@@ -33,7 +33,7 @@ def download_file(path: DownloadFilePath):
     file = os.path.join(FILE_PATH, path.filename)
     if os.path.exists(file):
         return make_response(send_file(file, as_attachment=True, cache_timeout=60))
-    raise FileNotExistException()
+    raise ResourceNotExistException()
 
 
 @api.get('/image/<filename>')

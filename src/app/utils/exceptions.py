@@ -117,7 +117,7 @@ class RoleHasUserException(BaseAPIException):
 # -------------角色-------------
 
 # -------------文件-------------
-class FileNotExistException(BaseAPIException):
+class ResourceNotExistException(BaseAPIException):
     error_code = 4001
     message = "文件不存在"
 
