@@ -23,7 +23,7 @@ class BaseAPIException(HTTPException):
             self.error_code = error_code
         if headers is not None:
             headers_merged = headers.copy()
-            headers_merged.update(self.headers)
+            headers_merged.update(headers)
             self.headers = headers_merged
 
         super(BaseAPIException, self).__init__(message, None)
@@ -119,7 +119,7 @@ class RoleHasUserException(BaseAPIException):
 # -------------文件-------------
 class ResourceNotExistException(BaseAPIException):
     error_code = 4001
-    message = "文件不存在"
+    message = "资源不存在"
 
 
 # -------------文件-------------
