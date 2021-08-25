@@ -16,7 +16,7 @@ migrate = Migrate(app, db)
 @app.route('/')
 def index():
     """根目录重定向到openapi"""
-    return redirect(url_for('openapi.index'))
+    return redirect(url_for('openapi.index', docExpansion="none"))
 
 
 @app.cli.command("test")
