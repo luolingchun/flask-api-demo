@@ -8,7 +8,7 @@ from uuid import uuid1
 from flask_openapi3 import APIBlueprint
 from flask_openapi3.models import Tag
 from rq.command import send_stop_job_command
-from rq.exceptions import InvalidJobOperation
+from rq.exceptions import InvalidJobOperation, NoSuchJobError
 from rq.job import Job
 
 from app.config import API_PREFIX, JWT
@@ -111,13 +111,14 @@ def query_job(query: JobQuery):
 # @role_required
 def del_job(path: JobPath):
     """任务删除"""
-    job = Job.fetch(path.job_id, connection=rq2.connection)
-    if job is not None:
-        send_stop_job_command(rq2.connection, path.job_id)
-        job.delete()
-        return response()
-    else:
+    try:
+        job = Job.fetch(path.job_id, connection=rq2.connection)
+    except NoSuchJobError:
         raise JobNotExistException()
+
+    send_stop_job_command(rq2.connection, path.job_id)
+    job.delete()
+    return response()
 
 
 @api.put('/<job_id>')
@@ -125,12 +126,13 @@ def del_job(path: JobPath):
 @role_required
 def retry_job(path: JobPath):
     """重试异步任务"""
-    job = Job.fetch(path.job_id, connection=rq2.connection)
-    if job is not None:
-        try:
-            job.requeue()
-            return response()
-        except InvalidJobOperation:
-            raise JobNotRetryException()
-    else:
+    try:
+        job = Job.fetch(path.job_id, connection=rq2.connection)
+    except NoSuchJobError:
         raise JobNotExistException()
+
+    try:
+        job.requeue()
+        return response()
+    except InvalidJobOperation:
+        raise JobNotRetryException()
