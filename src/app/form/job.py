@@ -1,21 +1,12 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2021/5/18 9:34
-from enum import Enum
 from typing import List, Any, Dict
 
 from pydantic import BaseModel, Field
+from rq.job import JobStatus
 
 from app.form import PageModel
-
-
-class JobStatus(str, Enum):
-    QUEUED = "queued"
-    STARTED = "started"
-    DEFERRED = "deferred"
-    FINISHED = "finished"
-    FAILED = "failed"
-    ALL = "all"
 
 
 class JobQuery(PageModel):

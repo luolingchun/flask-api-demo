@@ -9,7 +9,7 @@ from flask_openapi3 import APIBlueprint
 from flask_openapi3.models import Tag
 from rq.command import send_stop_job_command
 from rq.exceptions import InvalidJobOperation, NoSuchJobError
-from rq.job import Job
+from rq.job import Job, JobStatus
 
 from app.config import API_PREFIX, JWT
 from app.form.job import JobQuery, JobPath, JobResponse
@@ -47,15 +47,15 @@ def query_job(query: JobQuery):
     page_size = query.page_size
     status = query.status
 
-    if status == "queued":
+    if status == JobStatus.QUEUED:
         job_ids = default_queue.get_job_ids()
-    elif status == "started":
+    elif status == JobStatus.STARTED:
         job_ids = default_queue.started_job_registry.get_job_ids()
-    elif status == "deferred":
+    elif status == JobStatus.DEFERRED:
         job_ids = default_queue.deferred_job_registry.get_job_ids()
-    elif status == "finished":
+    elif status == JobStatus.FINISHED:
         job_ids = default_queue.finished_job_registry.get_job_ids()
-    elif status == "failed":
+    elif status == JobStatus.FAILED:
         job_ids = default_queue.failed_job_registry.get_job_ids()
     elif status == "all":
         queued_ids = default_queue.get_job_ids()
