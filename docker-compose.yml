@@ -1,7 +1,7 @@
 version: "3"
 services:
   flask-api-demo:
-    image: flask-api-demo:v1.0.0
+    image: flask-api-demo:1.0.0
     container_name: flask-api-demo
     restart: always
     privileged: true
