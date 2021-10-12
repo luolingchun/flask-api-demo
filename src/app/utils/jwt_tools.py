@@ -82,20 +82,21 @@ def user_lookup_loader_callback(_, jwt_payload):
 
 
 @jwt_manager.expired_token_loader
-def expired_token_loader_callback():
+def expired_token_callback(jwt_headers, jwt_payload):
     """token过期处理"""
+    print(jwt_headers and jwt_payload)
     return ExpiredTokenException()
 
 
 @jwt_manager.invalid_token_loader
-def invalid_token_loader_callback(e):
+def invalid_token_callback(e):
     """无效token处理"""
     print(e)
     return InvalidTokenException()
 
 
 @jwt_manager.unauthorized_loader
-def unauthorized_loader_callback(e):
+def unauthorized_callback(e):
     print(e)
     return AuthException()
 
