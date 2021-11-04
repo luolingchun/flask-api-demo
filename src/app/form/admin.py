@@ -18,7 +18,7 @@ class PermissionsResponse(JsonResponse):
     data: Optional[Dict[str, List[PermissionData]]]
 
 
-class GetUsersModel(PageModel):
+class UsersQuery(PageModel):
     pass
 
 
@@ -43,22 +43,22 @@ class GetUsersResponse(JsonResponse):
     total_page: int = Field(None, description="总页数")
 
 
-class UserPathModel(BaseModel):
+class UserPath(BaseModel):
     uid: int = Field(..., description="用户ID")
 
 
-class ModifyPasswordModel(BaseModel):
+class ModifyPasswordBody(BaseModel):
     password: str = Field(..., description="密码")
     confirm_password: str = Field(..., description="验证密码")
 
 
-class CreateRoleModel(BaseModel):
+class CreateRoleBody(BaseModel):
     name: str = Field(..., description="角色名称")
     describe: str = Field(None, description="角色描述")
     permission_ids: Optional[List[int]] = Field([], description="权限ID列表")
 
 
-class GetRolesModel(PageModel):
+class RolesQuery(PageModel):
     pass
 
 
@@ -68,20 +68,20 @@ class GetRolesResponse(JsonResponse):
     total_page: int = Field(None, description="总页数")
 
 
-class RolePathModel(BaseModel):
+class RolePath(BaseModel):
     rid: int = Field(..., description="角色ID")
 
 
-class UpdateRoleModel(BaseModel):
+class UpdateRoleBody(BaseModel):
     name: str = Field(None, description="角色名称")
     describe: str = Field(None, description="角色描述")
 
 
-class UserRoleModel(BaseModel):
+class UserRoleBody(BaseModel):
     uid: int = Field(..., description="用户ID")
     role_ids: Optional[List[int]] = Field([], description="角色ID列表")
 
 
-class RolePermissionModel(BaseModel):
+class RolePermissionBody(BaseModel):
     rid: int = Field(..., description="角色ID")
     permission_ids: Optional[List[int]] = Field([], description="权限ID列表")
