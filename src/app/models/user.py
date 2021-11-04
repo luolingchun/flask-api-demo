@@ -70,15 +70,15 @@ class User(Base):
             raise PasswordException(message='原始密码错误')
 
     @classmethod
-    def create(cls, model: RegisterBody):
-        cls.verify_register(model)
+    def create(cls, body: RegisterBody):
+        cls.verify_register(body)
         user = User()
-        user.username = model.username
-        user.password = model.password
-        user.email = model.email
+        user.username = body.username
+        user.password = body.password
+        user.email = body.email
 
         # 添加默认角色
-        role_ids = model.role_ids if model.role_ids else [1]
+        role_ids = body.role_ids if body.role_ids else [1]
         user.roles = Role.query.filter(Role.id.in_(role_ids)).all()
         db.session.add(user)
         db.session.commit()
