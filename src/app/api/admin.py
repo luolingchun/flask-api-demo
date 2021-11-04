@@ -21,7 +21,7 @@ from app.utils.response import response
 
 __version__ = '/v1'
 __bp__ = '/admin'
-url_prefix=API_PREFIX + __version__ + __bp__
+url_prefix = API_PREFIX + __version__ + __bp__
 tag = Tag(name="管理员", description="管理用户、角色、权限")
 api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
 
