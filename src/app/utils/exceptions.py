@@ -95,6 +95,11 @@ class EmailExistException(BaseAPIException):
     message = "邮箱已被注册"
 
 
+class RefreshException(BaseAPIException):
+    error_code = 2010
+    message = "更新令牌失败"
+
+
 # -------------用户-------------
 
 

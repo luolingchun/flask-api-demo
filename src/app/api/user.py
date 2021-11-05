@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/4 16:05
-from flask_jwt_extended import get_current_user
+from flask_jwt_extended import get_current_user, verify_jwt_in_request, get_jwt_identity, create_access_token
 from flask_openapi3 import APIBlueprint
 from flask_openapi3.models import Tag
 
@@ -9,6 +9,7 @@ from app.config import JWT, API_PREFIX
 from app.form.user import RegisterBody, LoginBody, PasswordBody, UserInfoResponse
 from app.models import db
 from app.models.user import User, Permission
+from app.utils.exceptions import RefreshException, UserNotExistException
 from app.utils.jwt_tools import get_token, login_required
 from app.utils.response import response
 
@@ -77,3 +78,24 @@ def get_permissions():
         else:
             data[module].append(permission_data)
     return response(data=data)
+
+
+@api.get('/refresh')
+def refresh():
+    """更新令牌"""
+    try:
+        verify_jwt_in_request(refresh=True)
+    except Exception as e:
+        print(e)
+        return RefreshException(message='更新令牌失败，请重新登录')
+
+    identity = get_jwt_identity()
+    if identity:
+        uid = identity['uid']
+        user = db.session.query(User).filter_by(id=uid).first()
+        if user is None:
+            raise UserNotExistException()
+        access_token = create_access_token(identity=identity)
+    else:
+        raise UserNotExistException()
+    return response(access_token=access_token)
