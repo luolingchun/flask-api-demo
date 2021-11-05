@@ -165,10 +165,10 @@ def set_user_role(body: UserRoleBody):
     return response()
 
 
-@api.put('roles/auths')
+@api.put('roles/permissions')
 @permission(name='给角色添加权限', module=PermissionGroup.ROLE, uuid='376f7d69-cd14-41c2-a4d2-ebdd4ca238bc')
 @role_required
-def set_role_auth(body: RolePermissionBody):
+def set_role_permission(body: RolePermissionBody):
     """给角色添加权限"""
     role = db.session.query(Role).filter(Role.id == body.rid).first()
     if role is None:
