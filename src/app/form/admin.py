@@ -25,7 +25,7 @@ class UsersQuery(PageModel):
 class RoleData(BaseModel):
     id: int
     name: str = Field(None, description="角色名称")
-    describe: str = Field(None, description="角色描述")
+    describe: str = Field(None, max_length=256, description="角色描述")
     permissions: List[PermissionData]
 
 
@@ -54,7 +54,7 @@ class ModifyPasswordBody(BaseModel):
 
 class CreateRoleBody(BaseModel):
     name: str = Field(..., description="角色名称")
-    describe: str = Field(None, description="角色描述")
+    describe: str = Field(None, max_length=256, description="角色描述")
     permission_ids: Optional[List[int]] = Field([], description="权限ID列表")
 
 
@@ -74,7 +74,7 @@ class RolePath(BaseModel):
 
 class UpdateRoleBody(BaseModel):
     name: str = Field(None, description="角色名称")
-    describe: str = Field(None, description="角色描述")
+    describe: str = Field(None, max_length=256, description="角色描述")
 
 
 class UserRoleBody(BaseModel):
