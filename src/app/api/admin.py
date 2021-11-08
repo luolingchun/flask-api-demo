@@ -27,8 +27,8 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_
 
 
 @api.get('/permissions', responses={"200": PermissionsResponse})
-@permission(name='获取所有权限', module=PermissionGroup.PERMISSION, uuid='913aa468-634d-42d4-8a75-6d0ed16723fb')
 @role_required
+@permission(name='获取所有权限', module=PermissionGroup.PERMISSION, uuid='913aa468-634d-42d4-8a75-6d0ed16723fb')
 def get_permissions():
     """获取所有权限"""
     permissions = db.session.query(Permission).all()
@@ -46,8 +46,8 @@ def get_permissions():
 
 
 @api.post('/users')
-@permission(name='添加用户', module=PermissionGroup.USER, uuid='82f206e8-a172-4e37-adfd-0a39e8a9fb8e')
 @role_required
+@permission(name='添加用户', module=PermissionGroup.USER, uuid='82f206e8-a172-4e37-adfd-0a39e8a9fb8e')
 def add_user(body: RegisterBody):
     """添加用户"""
     user = db.session.query(User).filter(User.username == body.username).first()
@@ -58,8 +58,8 @@ def add_user(body: RegisterBody):
 
 
 @api.get('/users', responses={"200": GetUsersResponse})
-@permission(name='获取所有用户', module=PermissionGroup.USER, uuid='ad62bda9-b1fb-4229-8b49-1f7acc6cadbc')
 @role_required
+@permission(name='获取所有用户', module=PermissionGroup.USER, uuid='ad62bda9-b1fb-4229-8b49-1f7acc6cadbc')
 def get_users(query: UsersQuery):
     """获取所有用户"""
     offset, limit = get_offset_limit(query.page, query.page_size)
@@ -71,8 +71,8 @@ def get_users(query: UsersQuery):
 
 
 @api.put('/password/<uid>')
-@permission(name='修改用户密码', module=PermissionGroup.USER, uuid='4f0d0f12-b552-41dc-8db3-fde11fdb2405')
 @role_required
+@permission(name='修改用户密码', module=PermissionGroup.USER, uuid='4f0d0f12-b552-41dc-8db3-fde11fdb2405')
 def modify_user_password(path: UserPath, body: ModifyPasswordBody):
     """修改用户密码"""
     user = db.session.query(User).filter(and_(User.id == path.uid, User.is_super != True)).first()
@@ -84,8 +84,8 @@ def modify_user_password(path: UserPath, body: ModifyPasswordBody):
 
 
 @api.delete('/users/<uid>')
-@permission(name="删除用户", module=PermissionGroup.USER, uuid='6502e822-f3da-4d42-a6de-65321b455178')
 @role_required
+@permission(name="删除用户", module=PermissionGroup.USER, uuid='6502e822-f3da-4d42-a6de-65321b455178')
 def delete_user(path: UserPath):
     """删除用户"""
     user = db.session.query(User).filter(and_(User.id == path.uid, User.is_super != True)).first()
@@ -97,8 +97,8 @@ def delete_user(path: UserPath):
 
 
 @api.post('/roles')
-@permission(name="新建角色", module=PermissionGroup.ROLE, uuid='4b3ba348-e860-41b6-9d97-fd290e713e76')
 @role_required
+@permission(name="新建角色", module=PermissionGroup.ROLE, uuid='4b3ba348-e860-41b6-9d97-fd290e713e76')
 def create_role(body: CreateRoleBody):
     """新建角色"""
     role = db.session.query(Role).filter(Role.name == body.name).first()
@@ -110,8 +110,8 @@ def create_role(body: CreateRoleBody):
 
 
 @api.get('/roles', responses={"200": GetRolesResponse})
-@permission(name='获取所有角色', module=PermissionGroup.ROLE, uuid='8abf94aa-b94a-465a-a67b-2e8acba9c59a')
 @role_required
+@permission(name='获取所有角色', module=PermissionGroup.ROLE, uuid='8abf94aa-b94a-465a-a67b-2e8acba9c59a')
 def get_roles(query: RolesQuery):
     """获取所有角色"""
     offset, limit = get_offset_limit(query.page, query.page_size)
@@ -122,8 +122,8 @@ def get_roles(query: RolesQuery):
 
 
 @api.put('/roles/<rid>')
-@permission(name='更新角色', module=PermissionGroup.ROLE, uuid='cd0de18c-2147-41b6-88f8-023cef35640d')
 @role_required
+@permission(name='更新角色', module=PermissionGroup.ROLE, uuid='cd0de18c-2147-41b6-88f8-023cef35640d')
 def update_role(path: RolePath, body: UpdateRoleBody):
     """更新角色"""
     role = db.session.query(Role).filter(Role.id == path.rid).first()
@@ -138,8 +138,8 @@ def update_role(path: RolePath, body: UpdateRoleBody):
 
 
 @api.delete('/roles/<int:rid>')
-@permission(name='删除角色', module='角色', uuid='cdb35c5d-f5c9-4ff5-ba6c-5bba8349a176')
 @role_required
+@permission(name='删除角色', module='角色', uuid='cdb35c5d-f5c9-4ff5-ba6c-5bba8349a176')
 def delete_role(path: RolePath):
     """删除角色"""
     role = db.session.query(Role).filter(Role.id == path.rid).first()
@@ -153,8 +153,8 @@ def delete_role(path: RolePath):
 
 
 @api.put('users/roles')
-@permission(name='给用户添加角色', module=PermissionGroup.USER, uuid='a6e4d9c4-6a8c-4095-a4a9-49d7ab2d8790')
 @role_required
+@permission(name='给用户添加角色', module=PermissionGroup.USER, uuid='a6e4d9c4-6a8c-4095-a4a9-49d7ab2d8790')
 def set_user_role(body: UserRoleBody):
     """给用户添加角色"""
     user = db.session.query(User).filter(and_(User.id == body.uid, User.is_super != True)).first()
@@ -166,8 +166,8 @@ def set_user_role(body: UserRoleBody):
 
 
 @api.put('roles/permissions')
-@permission(name='给角色添加权限', module=PermissionGroup.ROLE, uuid='376f7d69-cd14-41c2-a4d2-ebdd4ca238bc')
 @role_required
+@permission(name='给角色添加权限', module=PermissionGroup.ROLE, uuid='376f7d69-cd14-41c2-a4d2-ebdd4ca238bc')
 def set_role_permission(body: RolePermissionBody):
     """给角色添加权限"""
     role = db.session.query(Role).filter(Role.id == body.rid).first()

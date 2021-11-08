@@ -18,8 +18,8 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag])
 
 
 @api.post('')
-@permission(name='创建图书', module=PermissionGroup.BOOK, uuid='1e1cbdb2-6bdb-4091-91ec-5268fa8f2b73')
 @role_required
+@permission(name='创建图书', module=PermissionGroup.BOOK, uuid='1e1cbdb2-6bdb-4091-91ec-5268fa8f2b73')
 def create_book(body: BookBody):
     """创建图书"""
     print(body.name)
