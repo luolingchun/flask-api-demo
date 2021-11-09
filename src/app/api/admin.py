@@ -129,7 +129,7 @@ def update_role(path: RolePath, body: UpdateRoleBody):
     if role is None:
         raise RoleNotExistException()
     validate_name_when_update(Role, path.id, body.name)
-
+    role.update(body)
     return response()
 
 
