@@ -44,7 +44,7 @@ class GetUsersResponse(JsonResponse):
 
 
 class UserPath(BaseModel):
-    uid: int = Field(..., description="用户ID")
+    id: int = Field(..., description="用户ID")
 
 
 class ModifyPasswordBody(BaseModel):
@@ -69,7 +69,7 @@ class GetRolesResponse(JsonResponse):
 
 
 class RolePath(BaseModel):
-    rid: int = Field(..., description="角色ID")
+    id: int = Field(..., description="角色ID")
 
 
 class UpdateRoleBody(BaseModel):
@@ -78,10 +78,10 @@ class UpdateRoleBody(BaseModel):
 
 
 class UserRoleBody(BaseModel):
-    uid: int = Field(..., description="用户ID")
+    id: int = Field(..., description="用户ID")
     role_ids: Optional[List[int]] = Field([], description="角色ID列表")
 
 
 class RolePermissionBody(BaseModel):
-    rid: int = Field(..., description="角色ID")
+    id: int = Field(..., description="角色ID")
     permission_ids: Optional[List[int]] = Field([], description="权限ID列表")

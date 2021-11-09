@@ -75,7 +75,7 @@ def login_required(fn):
 
 @jwt_manager.user_lookup_loader
 def user_lookup_loader_callback(_, jwt_payload):
-    user = db.session.query(User).filter_by(id=jwt_payload['uid']).first()
+    user = db.session.query(User).filter_by(id=jwt_payload['id']).first()
     if user is None:
         return UserNotExistException()
     return user
@@ -107,7 +107,7 @@ def add_claims_to_access_token(identity):
 
 
 def get_token(user):
-    identity = {'uid': user.id}
+    identity = {'id': user.id}
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
     return access_token, refresh_token

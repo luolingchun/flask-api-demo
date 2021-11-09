@@ -91,7 +91,7 @@ def refresh():
 
     identity = get_jwt_identity()
     if identity:
-        uid = identity['uid']
+        uid = identity['id']
         user = db.session.query(User).filter_by(id=uid).first()
         if user is None:
             raise UserNotExistException()

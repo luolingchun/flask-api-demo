@@ -17,6 +17,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.form.user import RegisterBody
 from app.utils.exceptions import PasswordException, ActiveException, UserExistException, EmailExistException
 from . import Base, db
+from ..form.admin import UpdateRoleBody
 
 user_role = db.Table(
     'user_role',
@@ -133,6 +134,11 @@ class Role(Base):
         if permission_ids:
             role.permissions = db.session.query(Permission).filter(Permission.id.in_(permission_ids)).all()
         db.session.add(role)
+        db.session.commit()
+
+    def update(self, body: UpdateRoleBody):
+        self.name = body.name
+        self.describe = body.describe
         db.session.commit()
 
     def data(self):

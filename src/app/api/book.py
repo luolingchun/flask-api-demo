@@ -27,15 +27,15 @@ def create_book(body: BookBody):
     return response()
 
 
-@api.get('/<int:bid>')
+@api.get('/<int:id>')
 def get_book(path: BookQuery):
     """查询图书"""
     print(path)
-    return response(data=path.bid)
+    return response(data=path.id)
 
 
-@api.delete('/<int:bid>')
+@api.delete('/<int:id>')
 def delete_book(path: BookQuery):
     """删除图书"""
-    print(f"delete {path.bid}")
+    print(f"delete {path.id}")
     return response()

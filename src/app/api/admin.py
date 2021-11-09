@@ -11,11 +11,11 @@ from app.form.admin import PermissionsResponse, UsersQuery, GetUsersResponse, Mo
     UserPath, CreateRoleBody, RolesQuery, GetRolesResponse, RolePath, UpdateRoleBody, UserRoleBody, \
     RolePermissionBody
 from app.form.user import RegisterBody
-from app.models import db, get_offset_limit, get_total_page
+from app.models import db, get_offset_limit, get_total_page, validate_name, validate_name_when_update
 from app.models.user import User, Permission, Role
 from app.utils.enums import PermissionGroup
-from app.utils.exceptions import UserExistException, UserNotExistException, RoleExistException, RoleNotExistException, \
-    RoleHasUserException
+from app.utils.exceptions import UserExistException, UserNotExistException, RoleNotExistException, \
+    ResourceConstraintException
 from app.utils.jwt_tools import permission, role_required
 from app.utils.response import response
 
@@ -53,6 +53,7 @@ def add_user(body: RegisterBody):
     user = db.session.query(User).filter(User.username == body.username).first()
     if user:
         raise UserExistException()
+    validate_name(User, body.username, message='用户名')
     User.create(body)
     return response()
 
@@ -70,12 +71,12 @@ def get_users(query: UsersQuery):
     return response(data=data, total=total, total_page=total_page)
 
 
-@api.put('/password/<uid>')
+@api.put('/password/<id>')
 @role_required
 @permission(name='修改用户密码', module=PermissionGroup.USER, uuid='4f0d0f12-b552-41dc-8db3-fde11fdb2405')
 def modify_user_password(path: UserPath, body: ModifyPasswordBody):
     """修改用户密码"""
-    user = db.session.query(User).filter(and_(User.id == path.uid, User.is_super != True)).first()
+    user = db.session.query(User).filter(and_(User.id == path.id, User.is_super != True)).first()
     if user is None:
         raise UserNotExistException()
 
@@ -83,12 +84,12 @@ def modify_user_password(path: UserPath, body: ModifyPasswordBody):
     return response()
 
 
-@api.delete('/users/<uid>')
+@api.delete('/users/<id>')
 @role_required
 @permission(name="删除用户", module=PermissionGroup.USER, uuid='6502e822-f3da-4d42-a6de-65321b455178')
 def delete_user(path: UserPath):
     """删除用户"""
-    user = db.session.query(User).filter(and_(User.id == path.uid, User.is_super != True)).first()
+    user = db.session.query(User).filter(and_(User.id == path.id, User.is_super != True)).first()
     if user is None:
         raise UserNotExistException()
     db.session.delete(user)
@@ -101,9 +102,7 @@ def delete_user(path: UserPath):
 @permission(name="新建角色", module=PermissionGroup.ROLE, uuid='4b3ba348-e860-41b6-9d97-fd290e713e76')
 def create_role(body: CreateRoleBody):
     """新建角色"""
-    role = db.session.query(Role).filter(Role.name == body.name).first()
-    if role:
-        raise RoleExistException()
+    validate_name(Role, body.name)
     Role.create(name=body.name, describe=body.describe, permission_ids=body.permission_ids)
 
     return response()
@@ -121,32 +120,29 @@ def get_roles(query: RolesQuery):
     return response(data=data, total=total, total_page=total_page)
 
 
-@api.put('/roles/<rid>')
+@api.put('/roles/<id>')
 @role_required
 @permission(name='更新角色', module=PermissionGroup.ROLE, uuid='cd0de18c-2147-41b6-88f8-023cef35640d')
 def update_role(path: RolePath, body: UpdateRoleBody):
     """更新角色"""
-    role = db.session.query(Role).filter(Role.id == path.rid).first()
+    role = db.session.query(Role).filter(Role.id == path.id).first()
     if role is None:
         raise RoleNotExistException()
-    if db.session.query(Role).filter(Role.name == body.name).first():
-        raise RoleExistException(message='角色名称重复')
-    role.name = body.name
-    role.describe = body.describe
-    db.session.commit()
+    validate_name_when_update(Role, path.id, body.name)
+
     return response()
 
 
-@api.delete('/roles/<int:rid>')
+@api.delete('/roles/<int:id>')
 @role_required
 @permission(name='删除角色', module='角色', uuid='cdb35c5d-f5c9-4ff5-ba6c-5bba8349a176')
 def delete_role(path: RolePath):
     """删除角色"""
-    role = db.session.query(Role).filter(Role.id == path.rid).first()
+    role = db.session.query(Role).filter(Role.id == path.id).first()
     if role is None:
         raise RoleNotExistException()
     if role.users:
-        raise RoleHasUserException()
+        raise ResourceConstraintException()
     db.session.delete(role)
     db.session.commit()
     return response()
@@ -157,7 +153,7 @@ def delete_role(path: RolePath):
 @permission(name='给用户添加角色', module=PermissionGroup.USER, uuid='a6e4d9c4-6a8c-4095-a4a9-49d7ab2d8790')
 def set_user_role(body: UserRoleBody):
     """给用户添加角色"""
-    user = db.session.query(User).filter(and_(User.id == body.uid, User.is_super != True)).first()
+    user = db.session.query(User).filter(and_(User.id == body.id, User.is_super != True)).first()
     if user is None:
         raise UserNotExistException()
     user.roles = db.session.query(Role).filter(Role.id.in_(body.role_ids)).all()
@@ -170,7 +166,7 @@ def set_user_role(body: UserRoleBody):
 @permission(name='给角色添加权限', module=PermissionGroup.ROLE, uuid='376f7d69-cd14-41c2-a4d2-ebdd4ca238bc')
 def set_role_permission(body: RolePermissionBody):
     """给角色添加权限"""
-    role = db.session.query(Role).filter(Role.id == body.rid).first()
+    role = db.session.query(Role).filter(Role.id == body.id).first()
     if role is None:
         raise RoleNotExistException()
     role.permissions = db.session.query(Permission).filter(Permission.id.in_(body.permission_ids)).all()

@@ -7,6 +7,8 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, func
 
+from app.utils.exceptions import ResourceExistException
+
 db = SQLAlchemy()
 
 
@@ -23,6 +25,18 @@ def get_total_page(model, condition, limit):
     total = db.session.query(func.count(model.id)).filter(*condition).scalar()
     total_page = math.ceil(total / limit)
     return total, total_page
+
+
+def validate_name(model, name, message='名称'):
+    # 高并发场景下会失效
+    if db.session.query(model).filter(model.name == name).first():
+        raise ResourceExistException(message=f"{message}已存在")
+
+
+def validate_name_when_update(model, id, name, message='名称'):
+    # 高并发场景下会失效
+    if db.session.query(model).filter(model.id != id, model.name == name).first():
+        raise ResourceExistException(message=f"{message}已存在")
 
 
 class Base(db.Model):

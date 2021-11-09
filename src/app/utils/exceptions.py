@@ -127,6 +127,16 @@ class ResourceNotExistException(BaseAPIException):
     message = "资源不存在"
 
 
+class ResourceExistException(BaseAPIException):
+    error_code = 4002
+    message = "资源已存在"
+
+
+class ResourceConstraintException(BaseAPIException):
+    error_code = 4003
+    message = "资源被引用，不能删除"
+
+
 # -------------文件-------------
 
 # -------------任务-------------

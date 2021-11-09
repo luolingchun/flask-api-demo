@@ -11,4 +11,4 @@ class BookBody(BaseModel):
 
 
 class BookQuery(BaseModel):
-    bid: int = Field(..., description='图书id')
+    id: int = Field(..., description='图书id')
