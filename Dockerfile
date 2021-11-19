@@ -1,6 +1,6 @@
 FROM python:3.9-slim-bullseye
 
-MAINTAINER LLC
+LABEL author="LLC"
 
 # 使用上海时区
 ENV TZ=Asia/Shanghai
