@@ -7,7 +7,7 @@ from flask_openapi3.models import Tag
 from app.config import API_PREFIX
 from app.form.book import BookBody, BookQuery
 from app.utils.enums import PermissionGroup
-from app.utils.jwt_tools import permission, role_required
+from app.utils.jwt_tools import role_required
 from app.utils.response import response
 
 __version__ = '/v1'
@@ -18,8 +18,7 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag])
 
 
 @api.post('')
-@role_required
-@permission(name='创建图书', module=PermissionGroup.BOOK, uuid='1e1cbdb2-6bdb-4091-91ec-5268fa8f2b73')
+@role_required(name='创建图书', module=PermissionGroup.BOOK, uuid='1e1cbdb2-6bdb-4091-91ec-5268fa8f2b73')
 def create_book(body: BookBody):
     """创建图书"""
     print(body.name)

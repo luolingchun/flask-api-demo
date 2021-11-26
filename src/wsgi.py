@@ -70,5 +70,5 @@ def init_db():
 
 
 if __name__ == '__main__':
-    app.config['SQLALCHEMY_ECHO'] = True
+    # app.config['SQLALCHEMY_ECHO'] = True
     app.run("0.0.0.0", 5000, debug=True)

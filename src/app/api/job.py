@@ -18,7 +18,7 @@ from app.rq import rq2
 from app.rq.queue import default_queue
 from app.utils.enums import PermissionGroup
 from app.utils.exceptions import JobNotExistException, JobNotRetryException
-from app.utils.jwt_tools import role_required, permission
+from app.utils.jwt_tools import role_required
 from app.utils.response import response
 
 __version__ = '/v1'
@@ -29,8 +29,7 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_
 
 
 @api.post('')
-# @role_required
-@permission(name='添加异步任务', module=PermissionGroup.JOB, uuid='26017994-9c06-11eb-84be-8cec4baea5d8')
+# @role_required(name='添加异步任务', module=PermissionGroup.JOB, uuid='26017994-9c06-11eb-84be-8cec4baea5d8')
 def add_job():
     """添加异步任务"""
     job_id = str(uuid1())
@@ -39,8 +38,7 @@ def add_job():
 
 
 @api.get('', responses={"200": JobResponse})
-# @role_required
-@permission(name='查询异步任务', module=PermissionGroup.JOB, uuid='46ffb3d9-9c06-11eb-981b-8cec4baea5d8')
+# @role_required(name='查询异步任务', module=PermissionGroup.JOB, uuid='46ffb3d9-9c06-11eb-981b-8cec4baea5d8')
 def query_job(query: JobQuery):
     """查询异步任务"""
     page = query.page
@@ -107,8 +105,7 @@ def query_job(query: JobQuery):
 
 
 @api.delete('/<job_id>')
-# @role_required
-@permission(name='删除异步任务', module=PermissionGroup.JOB, uuid='4e440bab-9c06-11eb-8b14-8cec4baea5d8')
+# @role_required(name='删除异步任务', module=PermissionGroup.JOB, uuid='4e440bab-9c06-11eb-8b14-8cec4baea5d8')
 def del_job(path: JobPath):
     """任务删除"""
     try:
@@ -122,8 +119,7 @@ def del_job(path: JobPath):
 
 
 @api.put('/<job_id>')
-@role_required
-@permission(name='重试异步任务', module=PermissionGroup.JOB, uuid='54f0ed18-9c06-11eb-9220-8cec4baea5d8')
+@role_required(name='重试异步任务', module=PermissionGroup.JOB, uuid='54f0ed18-9c06-11eb-9220-8cec4baea5d8')
 def retry_job(path: JobPath):
     """重试异步任务"""
     try:

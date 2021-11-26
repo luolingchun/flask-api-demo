@@ -17,58 +17,44 @@ jwt_manager = JWTManager()
 permissions = []
 
 
-def permission(name, module, uuid):
-    """添加权限装饰器"""
+def role_required(name, module, uuid):
+    """
+    装饰器工厂函数
+    :param name: 权限名称
+    :param module: 权限模块
+    :param uuid: 唯一ID
+    :return: decorator
+    """
 
-    def wrapper(func):
+    def decorator(func):
+        """装饰器，为func添加权限属性"""
         global permissions
         permissions.append([name, module, uuid])
         setattr(func, 'uuid', uuid)
-        return func
 
-    return wrapper
+        @wraps(func)
+        def wrapper(*args, **kwargs):
 
+            verify_jwt_in_request()
+            user = get_current_user()
 
-def super_required(fn):
-    """管理权限装饰器"""
+            if is_user_allowed(user, func.uuid):
+                return func(*args, **kwargs)
+            else:
+                raise AuthException(message='权限不足')
 
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        verify_jwt_in_request()
-        current_user = get_current_user()
-        if not current_user.is_super:
-            raise AuthException(message='权限不足')
-        return fn(*args, **kwargs)
+        return wrapper
 
-    return wrapper
+    return decorator
 
 
-def role_required(fn):
-    """角色权限装饰器"""
-
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-
-        verify_jwt_in_request()
-        user = get_current_user()
-
-        if not hasattr(fn, 'uuid'):
-            setattr(fn, 'uuid', 'xxx')
-        if is_user_allowed(user, fn.uuid):
-            return fn(*args, **kwargs)
-        else:
-            raise AuthException(message='权限不足')
-
-    return wrapper
-
-
-def login_required(fn):
+def login_required(func):
     """登录装饰器"""
 
-    @wraps(fn)
+    @wraps(func)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
@@ -77,7 +63,7 @@ def login_required(fn):
 def user_lookup_loader_callback(_, jwt_payload):
     user = db.session.query(User).filter_by(id=jwt_payload['id']).first()
     if user is None:
-        raise UserNotExistException()
+        return UserNotExistException()
     return user
 
 
@@ -85,20 +71,20 @@ def user_lookup_loader_callback(_, jwt_payload):
 def expired_token_callback(jwt_headers, jwt_payload):
     """token过期处理"""
     print(jwt_headers and jwt_payload)
-    raise ExpiredTokenException()
+    return ExpiredTokenException()
 
 
 @jwt_manager.invalid_token_loader
 def invalid_token_callback(e):
     """无效token处理"""
     print(e)
-    raise InvalidTokenException()
+    return InvalidTokenException()
 
 
 @jwt_manager.unauthorized_loader
 def unauthorized_callback(e):
     print(e)
-    raise AuthException()
+    return AuthException()
 
 
 @jwt_manager.additional_claims_loader
