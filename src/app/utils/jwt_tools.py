@@ -37,7 +37,7 @@ def super_required(fn):
         verify_jwt_in_request()
         current_user = get_current_user()
         if not current_user.is_super:
-            return AuthException(message='权限不足')
+            raise AuthException(message='权限不足')
         return fn(*args, **kwargs)
 
     return wrapper
@@ -57,7 +57,7 @@ def role_required(fn):
         if is_user_allowed(user, fn.uuid):
             return fn(*args, **kwargs)
         else:
-            return AuthException(message='权限不足')
+            raise AuthException(message='权限不足')
 
     return wrapper
 
@@ -77,7 +77,7 @@ def login_required(fn):
 def user_lookup_loader_callback(_, jwt_payload):
     user = db.session.query(User).filter_by(id=jwt_payload['id']).first()
     if user is None:
-        return UserNotExistException()
+        raise UserNotExistException()
     return user
 
 
@@ -85,20 +85,20 @@ def user_lookup_loader_callback(_, jwt_payload):
 def expired_token_callback(jwt_headers, jwt_payload):
     """token过期处理"""
     print(jwt_headers and jwt_payload)
-    return ExpiredTokenException()
+    raise ExpiredTokenException()
 
 
 @jwt_manager.invalid_token_loader
 def invalid_token_callback(e):
     """无效token处理"""
     print(e)
-    return InvalidTokenException()
+    raise InvalidTokenException()
 
 
 @jwt_manager.unauthorized_loader
 def unauthorized_callback(e):
     print(e)
-    return AuthException()
+    raise AuthException()
 
 
 @jwt_manager.additional_claims_loader
