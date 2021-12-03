@@ -3,9 +3,9 @@
 # @Time    : 2020/5/4 15:52
 import traceback
 
+from flask_openapi3 import HTTPBearer
+from flask_openapi3 import Info
 from flask_openapi3 import OpenAPI
-from flask_openapi3.models import Info
-from flask_openapi3.models.security import HTTPBearer
 from werkzeug.exceptions import HTTPException
 
 

@@ -3,7 +3,7 @@
 # @Time    : 2020/5/4 16:05
 from flask_jwt_extended import get_current_user, verify_jwt_in_request, get_jwt_identity, create_access_token
 from flask_openapi3 import APIBlueprint
-from flask_openapi3.models import Tag
+from flask_openapi3 import Tag
 
 from app.config import JWT, API_PREFIX
 from app.form.user import RegisterBody, LoginBody, PasswordBody, UserInfoResponse

@@ -6,7 +6,7 @@ from datetime import timedelta
 from uuid import uuid1
 
 from flask_openapi3 import APIBlueprint
-from flask_openapi3.models import Tag
+from flask_openapi3 import Tag
 from rq.command import send_stop_job_command
 from rq.exceptions import InvalidJobOperation, NoSuchJobError
 from rq.job import Job, JobStatus

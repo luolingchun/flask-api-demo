@@ -2,7 +2,7 @@
 # @Author  : llc
 # @Time    : 2020/5/4 16:05
 from flask_openapi3 import APIBlueprint
-from flask_openapi3.models import Tag
+from flask_openapi3 import Tag
 
 from app.config import API_PREFIX
 from app.form.book import BookBody, BookQuery

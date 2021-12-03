@@ -3,7 +3,7 @@
 # @Time    : 2020/5/17 15:24
 
 from flask_openapi3 import APIBlueprint
-from flask_openapi3.models import Tag
+from flask_openapi3 import Tag
 from sqlalchemy import and_
 
 from app.config import API_PREFIX, JWT

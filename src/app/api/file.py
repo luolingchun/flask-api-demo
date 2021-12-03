@@ -5,7 +5,7 @@ import os
 
 from flask import make_response, send_file
 from flask_openapi3 import APIBlueprint
-from flask_openapi3.models import Tag
+from flask_openapi3 import Tag
 
 from app.config import API_PREFIX, FILE_PATH
 from app.form.file import UploadFileForm, DownloadFilePath
