@@ -44,7 +44,7 @@ def role_required(name, module, uuid):
                 raise AuthException(message='权限不足')
 
         # 复制全局变量
-        wrapper.__extra_globals__ = func.__globals__
+        wrapper.__extra_globals__ = getattr(func, '__globals__', {})
         wrapper.__extra_globals__.update(**getattr(func, "__extra_globals__", {}))
 
         return wrapper
@@ -61,7 +61,7 @@ def login_required(func):
         return func(*args, **kwargs)
 
     # 复制全局变量
-    wrapper.__extra_globals__ = func.__globals__
+    wrapper.__extra_globals__ = getattr(func, '__globals__', {})
     wrapper.__extra_globals__.update(**getattr(func, "__extra_globals__", {}))
 
     return wrapper
