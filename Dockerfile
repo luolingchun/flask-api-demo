@@ -18,9 +18,9 @@ RUN \
     apt-get update && \
     apt-get install -y gcc python3-dev --no-install-recommends && \
     \
-    python -m pip install -U pip && \
-    python -m pip install -r /tmp/requirements.txt && \
-    python -m pip install supervisor uwsgi && \
+    python -m pip install -U pip -i https://pypi.tuna.tsinghua.edu.cn/simple some-package && \
+    python -m pip install -r /tmp/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package && \
+    python -m pip install supervisor uwsgi -i https://pypi.tuna.tsinghua.edu.cn/simple some-package && \
     \
     echo_supervisord_conf > /etc/supervisord.conf && \
     echo "[include]" >> /etc/supervisord.conf && \
