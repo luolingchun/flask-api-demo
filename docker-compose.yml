@@ -10,6 +10,10 @@ services:
       - PROCESSES=4
       - HTTP_TIMEOUT=60
 
+    depends_on:
+      - flask-api-demo-postgres
+      - flask-api-demo-redis
+
     ports:
       - "2021:5000"
 
