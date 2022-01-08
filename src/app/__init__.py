@@ -64,7 +64,7 @@ def create_app():
     app = OpenAPI(
         __name__,
         info=Info(title=config.APP_NAME, version=config.APP_VERSION),
-        securitySchemes={"jwt": HTTPBearer(bearerFormat="JWT")}
+        security_schemes={"jwt": HTTPBearer(bearerFormat="JWT")}
     )
     # 全局配置项
     app.config.from_object(config)
