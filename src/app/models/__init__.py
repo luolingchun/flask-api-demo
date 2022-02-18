@@ -5,7 +5,7 @@ import math
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, func
+from sqlalchemy import func
 
 from app.utils.exceptions import ResourceExistException
 
@@ -43,6 +43,6 @@ class Base(db.Model):
     """基础数据库模型：提供id、创建时间、更新时间"""
     __abstract__ = True
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}  # 支持中文
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    create_time = Column(db.DateTime, default=datetime.now)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)

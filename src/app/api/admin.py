@@ -61,7 +61,7 @@ def add_user(body: RegisterBody):
 def get_users(query: UsersQuery):
     """获取所有用户"""
     offset, limit = get_offset_limit(query.page, query.page_size)
-    condition = [User.is_super != True]
+    condition = [User.is_super == 0]
     users = db.session.query(User).filter(*condition).offset(offset).limit(limit).all()
     total, total_page = get_total_page(User, condition, limit)
     data = [user.data() for user in users]
@@ -72,7 +72,7 @@ def get_users(query: UsersQuery):
 @role_required(name='修改用户密码', module=PermissionGroup.USER, uuid='4f0d0f12-b552-41dc-8db3-fde11fdb2405')
 def modify_user_password(path: UserPath, body: ModifyPasswordBody):
     """修改用户密码"""
-    user = db.session.query(User).filter(and_(User.id == path.id, User.is_super != True)).first()
+    user = db.session.query(User).filter(and_(User.id == path.id, User.is_super == 0)).first()
     if user is None:
         raise UserNotExistException()
 
@@ -84,7 +84,7 @@ def modify_user_password(path: UserPath, body: ModifyPasswordBody):
 @role_required(name="删除用户", module=PermissionGroup.USER, uuid='6502e822-f3da-4d42-a6de-65321b455178')
 def delete_user(path: UserPath):
     """删除用户"""
-    user = db.session.query(User).filter(and_(User.id == path.id, User.is_super != True)).first()
+    user = db.session.query(User).filter(and_(User.id == path.id, User.is_super == 0)).first()
     if user is None:
         raise UserNotExistException()
     db.session.delete(user)
@@ -143,7 +143,7 @@ def delete_role(path: RolePath):
 @role_required(name='给用户添加角色', module=PermissionGroup.USER, uuid='a6e4d9c4-6a8c-4095-a4a9-49d7ab2d8790')
 def set_user_role(body: UserRoleBody):
     """给用户添加角色"""
-    user = db.session.query(User).filter(and_(User.id == body.id, User.is_super != True)).first()
+    user = db.session.query(User).filter(and_(User.id == body.id, User.is_super == 0)).first()
     if user is None:
         raise UserNotExistException()
     user.roles = db.session.query(Role).filter(Role.id.in_(body.role_ids)).all()

@@ -2,7 +2,7 @@
 # @Author  : llc
 # @Time    : 2020/5/4 17:24
 
-"""
+r"""
 采用经典的权限五表设计：
 User        Role        Permission
   \         /   \        /
@@ -80,7 +80,7 @@ class User(Base):
 
         # 添加默认角色
         role_ids = body.role_ids if body.role_ids else [1]
-        user.roles = Role.query.filter(Role.id.in_(role_ids)).all()
+        user.roles = db.session.query(Role).filter(Role.id.in_(role_ids)).all()
         db.session.add(user)
         db.session.commit()
 
