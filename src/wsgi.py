@@ -2,7 +2,7 @@
 # @Author  : llc
 # @Time    : 2020/5/4 15:53
 from flask import redirect, url_for
-from flask.cli import with_appcontext
+from flask.cli import click, with_appcontext
 from flask_migrate import Migrate
 
 from app import create_app
@@ -20,9 +20,12 @@ def index():
 
 
 @app.cli.command("test")
-def test():
+@click.argument("a")
+@click.option("--b", default='b', help='option help')
+def test(a, b):
     """test flask cli command"""
-    print('test')
+    print(a)
+    print(b)
 
 
 @app.cli.command("init_db")
