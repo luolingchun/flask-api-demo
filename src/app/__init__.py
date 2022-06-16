@@ -7,6 +7,7 @@ from flask_openapi3 import HTTPBearer
 from flask_openapi3 import Info
 from flask_openapi3 import OpenAPI
 from werkzeug.exceptions import HTTPException
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 def init_exception(app: OpenAPI):
@@ -66,6 +67,8 @@ def create_app():
         info=Info(title=config.APP_NAME, version=config.APP_VERSION),
         security_schemes={"jwt": HTTPBearer(bearerFormat="JWT")}
     )
+    # 使用真实IP
+    app.wsgi_app = ProxyFix(app.wsgi_app)
     # 全局配置项
     app.config.from_object(config)
     # 初始化全局异常
