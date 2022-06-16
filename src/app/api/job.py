@@ -13,7 +13,7 @@ from rq.job import Job, JobStatus
 
 from app.config import API_PREFIX, JWT
 from app.form.job import JobQuery, JobPath, JobResponse
-from app.jobs import job_test
+from app.job import job_test
 from app.rq import rq2
 from app.rq.queue import default_queue
 from app.utils.enums import PermissionGroup

@@ -6,7 +6,7 @@ from flask.cli import click, with_appcontext
 from flask_migrate import Migrate
 
 from app import create_app
-from app.models import db
+from app.model import db
 
 app = create_app()
 
@@ -32,7 +32,7 @@ def test(a, b):
 @with_appcontext
 def init_db():
     """初始化数据库"""
-    from app.models.user import User, Permission, Role
+    from app.model.user import User, Permission, Role
     from app.utils.jwt_tools import permissions
     user = db.session.query(User).filter(User.username == "super").first()
     if user:

@@ -7,8 +7,8 @@ from flask_openapi3 import Tag
 
 from app.config import JWT, API_PREFIX
 from app.form.user import RegisterBody, LoginBody, PasswordBody, UserInfoResponse
-from app.models import db
-from app.models.user import User, Permission
+from app.model import db
+from app.model.user import User, Permission
 from app.utils.exceptions import RefreshException, UserNotExistException
 from app.utils.jwt_tools import get_token, login_required
 from app.utils.response import response

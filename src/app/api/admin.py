@@ -11,8 +11,8 @@ from app.form.admin import PermissionsResponse, UsersQuery, GetUsersResponse, Mo
     UserPath, CreateRoleBody, RolesQuery, GetRolesResponse, RolePath, UpdateRoleBody, UserRoleBody, \
     RolePermissionBody
 from app.form.user import RegisterBody
-from app.models import db, get_offset_limit, get_total_page, validate_name, validate_name_when_update
-from app.models.user import User, Permission, Role
+from app.model import db, get_offset_limit, get_total_page, validate_name, validate_name_when_update
+from app.model.user import User, Permission, Role
 from app.utils.enums import PermissionGroup
 from app.utils.exceptions import UserExistException, UserNotExistException, RoleNotExistException, \
     ResourceConstraintException

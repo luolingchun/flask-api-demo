@@ -48,7 +48,7 @@ def init_jwt(app: OpenAPI):
 
 def init_db(app: OpenAPI):
     """初始化数据库"""
-    from app.models import db
+    from app.model import db
     db.init_app(app)
 
 

@@ -7,8 +7,8 @@ from functools import wraps
 from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_user, create_access_token, \
     create_refresh_token
 
-from app.models import db
-from app.models.user import User
+from app.model import db
+from app.model.user import User
 from app.utils.exceptions import AuthException, InvalidTokenException, UserNotExistException, ExpiredTokenException
 
 jwt_manager = JWTManager()
