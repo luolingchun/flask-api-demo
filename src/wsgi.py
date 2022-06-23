@@ -72,6 +72,28 @@ def init_db():
         print('添加普通用户角色成功.')
 
 
+@app.cli.command("register_permission")
+@with_appcontext
+def register_permission():
+    """注册权限"""
+    from app.utils.jwt_tools import permissions
+    from app.model import db
+    from app.model.user import Permission
+
+    for name, module, uuid in permissions:
+        permission = db.session.query(Permission).filter(Permission.name == name).first()
+        if permission:
+            print(f'{permission} is exists.')
+            continue
+        permission = Permission()
+        permission.name = name
+        permission.module = module
+        permission.uuid = uuid
+        db.session.add(permission)
+        db.session.commit()
+        print(f'{name} register success.')
+
+
 if __name__ == '__main__':
     # app.config['SQLALCHEMY_ECHO'] = True
     app.run("0.0.0.0", 5000, debug=True)
