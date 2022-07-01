@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/4 15:52
+import importlib
+import os
+import re
 import traceback
 
 from flask_openapi3 import HTTPBearer
@@ -27,18 +30,41 @@ def init_exception(app: OpenAPI):
             return UnknownException()
 
 
+def auto_register_api(app: OpenAPI):
+    """自动注册蓝图API
+    自动寻找api文件夹中的APIBlueprint并完成注册
+    """
+    here = os.path.dirname(__file__)
+    api_dir = os.path.join(here, 'api')
+    for root, dirs, files in os.walk(api_dir):
+        for file in files:
+            if file == '__init__.py':
+                continue
+            if not file.endswith('.py'):
+                continue
+            api_file = os.path.join(root, file)
+            rule = re.split(r'src|.py', api_file)[1]
+            api_route = '.'.join(rule.split(os.sep)).strip('.')
+            api = importlib.import_module(api_route)
+            try:
+                app.register_api(api.api)
+            except AttributeError:
+                print(f"模块 {api_route} 中没有api变量")
+
+
 def register_apis(app: OpenAPI):
     """注册API蓝图"""
-    from app.api.user import api as user_api
-    from app.api.admin import api as admin_api
-    from app.api.book import api as book_api
-    from app.api.file import api as file_api
-    from app.api.job import api as job_api
-    app.register_api(user_api)
-    app.register_api(admin_api)
-    app.register_api(book_api)
-    app.register_api(file_api)
-    app.register_api(job_api)
+    # from app.api.user import api as user_api
+    # from app.api.admin import api as admin_api
+    # from app.api.book import api as book_api
+    # from app.api.file import api as file_api
+    # from app.api.job import api as job_api
+    # app.register_api(user_api)
+    # app.register_api(admin_api)
+    # app.register_api(book_api)
+    # app.register_api(file_api)
+    # app.register_api(job_api)
+    auto_register_api(app)
 
 
 def init_jwt(app: OpenAPI):
@@ -65,7 +91,8 @@ def create_app():
     app = OpenAPI(
         __name__,
         info=Info(title=config.APP_NAME, version=config.APP_VERSION),
-        security_schemes={"jwt": HTTPBearer(bearerFormat="JWT")}
+        security_schemes={"jwt": HTTPBearer(bearerFormat="JWT")},
+        doc_expansion="none",
     )
     # 使用真实IP
     app.wsgi_app = ProxyFix(app.wsgi_app)
