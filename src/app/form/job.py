@@ -10,7 +10,7 @@ from app.form import PageModel
 
 
 class JobQuery(PageModel):
-    status: JobStatus = Field(..., description='任务状态')
+    status: JobStatus = Field(..., description="任务状态")
 
 
 class JobPath(BaseModel):

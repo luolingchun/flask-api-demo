@@ -12,7 +12,7 @@ from werkzeug.exceptions import HTTPException
 class BaseAPIException(HTTPException):
     code = 200
     error_code = -1
-    message = '服务器未知错误'
+    message = "服务器未知错误"
 
     def __init__(self, code=None, message=None, error_code=None, headers=None):
         if code:
@@ -37,7 +37,7 @@ class BaseAPIException(HTTPException):
         return text
 
     def get_headers(self, *args, **kwargs):
-        return [('Content-Type', 'application/json')]
+        return [("Content-Type", "application/json")]
 
 
 class UnknownException(BaseAPIException):

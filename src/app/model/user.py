@@ -20,29 +20,29 @@ from . import Base, db
 from ..form.admin import UpdateRoleBody
 
 user_role = db.Table(
-    'user_role',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
+    "user_role",
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
+    db.Column("role_id", db.Integer, db.ForeignKey("role.id"))
 )
 
 role_permission = db.Table(
-    'role_permission',
-    db.Column('role_id', db.Integer, db.ForeignKey('role.id')),
-    db.Column('permission_id', db.Integer, db.ForeignKey('permission.id'))
+    "role_permission",
+    db.Column("role_id", db.Integer, db.ForeignKey("role.id")),
+    db.Column("permission_id", db.Integer, db.ForeignKey("permission.id"))
 )
 
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = "user"
     __table_args__ = ({"comment": "用户表"})
-    username = db.Column(db.String(32), unique=True, nullable=False, comment='用户名')
-    fullname = db.Column(db.String(32), unique=False, nullable=False, default='', comment='姓名')
-    email = db.Column(db.String(32), unique=True, nullable=True, comment='邮箱')
-    is_super = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment='是否是超级管理员')
-    is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment='是否激活')
-    _password = db.Column('password', db.Text, comment='密码')
+    username = db.Column(db.String(32), unique=True, nullable=False, comment="用户名")
+    fullname = db.Column(db.String(32), unique=False, nullable=False, default="", comment="姓名")
+    email = db.Column(db.String(32), unique=True, nullable=True, comment="邮箱")
+    is_super = db.Column(db.Boolean, unique=False, nullable=False, default=False, comment="是否是超级管理员")
+    is_active = db.Column(db.Boolean, unique=False, nullable=False, default=True, comment="是否激活")
+    _password = db.Column("password", db.Text, comment="密码")
 
-    roles = db.relationship('Role', secondary=user_role, back_populates="users")
+    roles = db.relationship("Role", secondary=user_role, back_populates="users")
 
     @property
     def password(self):
@@ -68,7 +68,7 @@ class User(Base):
             self.password = new_password
             db.session.commit()
         else:
-            raise PasswordException(message='原始密码错误')
+            raise PasswordException(message="原始密码错误")
 
     @classmethod
     def create(cls, body: RegisterBody):
@@ -86,12 +86,12 @@ class User(Base):
 
     def data(self):
         return {
-            'id': self.id,
-            'username': self.username,
-            'fullname': self.fullname,
-            'email': self.email,
-            'is_active': self.is_active,
-            'roles': [role.data() for role in self.roles]
+            "id": self.id,
+            "username": self.username,
+            "fullname": self.fullname,
+            "email": self.email,
+            "is_active": self.is_active,
+            "roles": [role.data() for role in self.roles]
         }
 
     @classmethod
@@ -117,13 +117,13 @@ class User(Base):
 
 
 class Role(Base):
-    __tablename__ = 'role'
+    __tablename__ = "role"
     __table_args__ = ({"comment": "角色表"})
-    name = db.Column(db.String(32), unique=True, comment='角色名称')
-    describe = db.Column(db.String(255), comment='角色描述')
+    name = db.Column(db.String(32), unique=True, comment="角色名称")
+    describe = db.Column(db.String(255), comment="角色描述")
 
-    users = db.relationship('User', secondary=user_role, back_populates="roles")
-    permissions = db.relationship('Permission', secondary=role_permission, back_populates="roles")
+    users = db.relationship("User", secondary=user_role, back_populates="roles")
+    permissions = db.relationship("Permission", secondary=role_permission, back_populates="roles")
 
     @staticmethod
     def create(name, describe, permission_ids):
@@ -143,25 +143,25 @@ class Role(Base):
 
     def data(self):
         return {
-            'id': self.id,
-            'name': self.name,
-            'describe': self.describe,
-            'permissions': [permission.data() for permission in self.permissions]
+            "id": self.id,
+            "name": self.name,
+            "describe": self.describe,
+            "permissions": [permission.data() for permission in self.permissions]
         }
 
 
 class Permission(Base):
-    __tablename__ = 'permission'
+    __tablename__ = "permission"
     __table_args__ = ({"comment": "权限表"})
-    name = db.Column(db.String(32), unique=True, comment='权限名称')
-    module = db.Column(db.String(32), comment='权限模块')
-    uuid = db.Column(db.String(255), unique=True, comment='权限uuid')
+    name = db.Column(db.String(32), unique=True, comment="权限名称")
+    module = db.Column(db.String(32), comment="权限模块")
+    uuid = db.Column(db.String(255), unique=True, comment="权限uuid")
 
-    roles = db.relationship('Role', secondary=role_permission, back_populates="permissions")
+    roles = db.relationship("Role", secondary=role_permission, back_populates="permissions")
 
     def data(self):
         return {
-            'id': self.id,
-            'name': self.name,
-            'module': self.module
+            "id": self.id,
+            "name": self.name,
+            "module": self.module
         }

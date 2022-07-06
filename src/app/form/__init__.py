@@ -12,4 +12,4 @@ class PageModel(BaseModel):
 
 class JsonResponse(BaseModel):
     code: int = Field(default=0, description="状态码")
-    message: str = Field(default='ok', description="异常信息")
+    message: str = Field(default="ok", description="异常信息")

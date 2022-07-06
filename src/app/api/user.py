@@ -13,14 +13,14 @@ from app.utils.exceptions import RefreshException, UserNotExistException
 from app.utils.jwt_tools import get_token, login_required
 from app.utils.response import response
 
-__version__ = '/v1'
-__bp__ = '/user'
+__version__ = "/v1"
+__bp__ = "/user"
 url_prefix = API_PREFIX + __version__ + __bp__
 tag = Tag(name="用户", description="用户注册、登录、个人管理")
 api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
 
 
-@api.post('/register')
+@api.post("/register")
 def register(body: RegisterBody):
     """用户注册"""
     # 用户注册时默认没有角色
@@ -29,7 +29,7 @@ def register(body: RegisterBody):
     return response()
 
 
-@api.post('/login')
+@api.post("/login")
 def login(body: LoginBody):
     """用户登录"""
     user = User.verify_login(body.username, body.password)
@@ -37,19 +37,19 @@ def login(body: LoginBody):
     return response(data={"access_token": access_token, "refresh_token": refresh_token})
 
 
-@api.get('/info', responses={"200": UserInfoResponse})
+@api.get("/info", responses={"200": UserInfoResponse})
 @login_required
 def get_info():
     """获取用户信息"""
     user = get_current_user()
     data = {
-        'username': user.username,
-        'email': user.email,
+        "username": user.username,
+        "email": user.email,
     }
     return response(data=data)
 
 
-@api.put('/password')
+@api.put("/password")
 @login_required
 def modify_password(body: PasswordBody):
     """修改密码"""
@@ -58,7 +58,7 @@ def modify_password(body: PasswordBody):
     return response()
 
 
-@api.get('/permissions')
+@api.get("/permissions")
 @login_required
 def get_permissions():
     """获取用户权限"""
@@ -71,7 +71,7 @@ def get_permissions():
     data = {}
     for permission in permissions:
         permission_data = permission.data()
-        module = permission_data['module']
+        module = permission_data["module"]
         if not data.get(module):
             data[module] = []
             data[module].append(permission_data)
@@ -80,18 +80,18 @@ def get_permissions():
     return response(data=data)
 
 
-@api.get('/refresh')
+@api.get("/refresh")
 def refresh():
     """更新令牌"""
     try:
         verify_jwt_in_request(refresh=True)
     except Exception as e:
         print(e)
-        return RefreshException(message='更新令牌失败，请重新登录')
+        return RefreshException(message="更新令牌失败，请重新登录")
 
     identity = get_jwt_identity()
     if identity:
-        uid = identity['id']
+        uid = identity["id"]
         user = db.session.query(User).filter_by(id=uid).first()
         if user is None:
             raise UserNotExistException()

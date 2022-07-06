@@ -7,7 +7,7 @@ from datetime import timedelta
 # -------------------APP基础配置-------------------
 APP_NAME = "Flask API"
 APP_VERSION = "1.0.0"
-API_PREFIX = '/api'
+API_PREFIX = "/api"
 # -------------------APP基础配置-------------------
 
 # 正确返回中文
@@ -28,12 +28,12 @@ SQLALCHEMY_DATABASE_URI = DB_URI
 
 
 # -------------------redis数据库配置-------------------
-REDIS_HOST = os.getenv('REDIS_HOST', 'flask-redis')
-REDIS_USER = os.getenv('REDIS_USER', 'redis_user')
-REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', 'redis_password')
+REDIS_HOST = os.getenv("REDIS_HOST", "flask-redis")
+REDIS_USER = os.getenv("REDIS_USER", "redis_user")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "redis_password")
 REDIS_PORT = 6379
 RQ_REDIS_DB = 0
-RQ_REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{RQ_REDIS_DB}'
+RQ_REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{RQ_REDIS_DB}"
 # -------------------redis数据库配置-------------------
 
 # -------------------JWT-------------------
@@ -45,8 +45,8 @@ JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
 
 
 # -------------------数据路径-------------------
-DATA_PREFIX = '/data/data'
-FILE_PATH = os.path.join(DATA_PREFIX, 'files')
+DATA_PREFIX = "/data/data"
+FILE_PATH = os.path.join(DATA_PREFIX, "files")
 for d in [FILE_PATH]:
     if not os.path.exists(d):
         os.makedirs(d)

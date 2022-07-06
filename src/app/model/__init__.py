@@ -27,13 +27,13 @@ def get_total_page(model, condition, limit):
     return total, total_page
 
 
-def validate_name(model, name, message='名称'):
+def validate_name(model, name, message="名称"):
     # 高并发场景下会失效
     if db.session.query(model).filter(model.name == name).first():
         raise ResourceExistException(message=f"{message}已存在")
 
 
-def validate_name_when_update(model, id, name, message='名称'):
+def validate_name_when_update(model, id, name, message="名称"):
     # 高并发场景下会失效
     if db.session.query(model).filter(model.id != id, model.name == name).first():
         raise ResourceExistException(message=f"{message}已存在")

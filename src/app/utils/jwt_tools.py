@@ -30,7 +30,7 @@ def role_required(name, module, uuid):
         """装饰器，为func添加权限属性"""
         global permissions
         permissions.append([name, module, uuid])
-        setattr(func, 'uuid', uuid)
+        setattr(func, "uuid", uuid)
 
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -41,7 +41,7 @@ def role_required(name, module, uuid):
             if is_user_allowed(user, func.uuid):
                 return func(*args, **kwargs)
             else:
-                raise AuthException(message='权限不足')
+                raise AuthException(message="权限不足")
 
         return wrapper
 
@@ -61,7 +61,7 @@ def login_required(func):
 
 @jwt_manager.user_lookup_loader
 def user_lookup_loader_callback(_, jwt_payload):
-    user = db.session.query(User).filter_by(id=jwt_payload['id']).first()
+    user = db.session.query(User).filter_by(id=jwt_payload["id"]).first()
     if user is None:
         return UserNotExistException()
     return user
@@ -93,7 +93,7 @@ def add_claims_to_access_token(identity):
 
 
 def get_token(user):
-    identity = {'id': user.id}
+    identity = {"id": user.id}
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
     return access_token, refresh_token

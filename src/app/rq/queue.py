@@ -4,4 +4,4 @@
 
 from app.rq import rq2
 
-default_queue = rq2.get_queue('default')
+default_queue = rq2.get_queue("default")

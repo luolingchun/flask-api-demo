@@ -5,7 +5,7 @@ from . import Base, db
 
 
 class Book(Base):
-    __tablename__ = 'book'
+    __tablename__ = "book"
     __table_args__ = ({"comment": "图书表"})
     name = db.Column(db.String(32), comment="名称")
     author = db.Column(db.String(4), comment="作者")

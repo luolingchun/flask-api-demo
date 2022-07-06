@@ -35,16 +35,16 @@ def auto_register_api(app: OpenAPI):
     自动寻找api文件夹中的APIBlueprint并完成注册
     """
     here = os.path.dirname(__file__)
-    api_dir = os.path.join(here, 'api')
+    api_dir = os.path.join(here, "api")
     for root, dirs, files in os.walk(api_dir):
         for file in files:
-            if file == '__init__.py':
+            if file == "__init__.py":
                 continue
-            if not file.endswith('.py'):
+            if not file.endswith(".py"):
                 continue
             api_file = os.path.join(root, file)
-            rule = re.split(r'src|.py', api_file)[1]
-            api_route = '.'.join(rule.split(os.sep)).strip('.')
+            rule = re.split(r"src|.py", api_file)[1]
+            api_route = ".".join(rule.split(os.sep)).strip(".")
             api = importlib.import_module(api_route)
             try:
                 app.register_api(api.api)
