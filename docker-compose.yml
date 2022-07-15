@@ -4,7 +4,6 @@ services:
     image: flask-api-demo:1.0.0
     container_name: flask-api-demo
     restart: always
-    privileged: true
 
     environment:
       - PROCESSES=4
@@ -26,7 +25,6 @@ services:
     image: postgres:12.6
     container_name: flask-api-demo-postgres
     restart: always
-    privileged: true
 
     ports:
       - "20211:5432"
@@ -44,7 +42,6 @@ services:
     image: redis:6
     container_name: flask-api-demo-redis
     restart: always
-    privileged: true
 
     ports:
       - "20212:6379"
