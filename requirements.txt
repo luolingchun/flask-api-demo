@@ -1,10 +1,15 @@
 flask
+markupsafe
+Werkzeug
 Flask-JWT-Extended
 Flask-Migrate
 Flask-SQLAlchemy
+SQLAlchemy
 pydantic
 email-validator
 python-dotenv
 psycopg2-binary
 flask-openapi3
 flask_rq2
+rq
+redis
