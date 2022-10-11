@@ -77,17 +77,23 @@ class ActiveException(BaseAPIException):
 
 class AuthException(BaseAPIException):
     error_code = 2005
-    message = "认证失败，没有找到token"
+    message = "认证失败，没有找到令牌"
 
 
 class InvalidTokenException(BaseAPIException):
     error_code = 2006
-    message = "token不合法"
+    message = "令牌不合法"
+
+
+class InvalidAccessTokenException(BaseAPIException):
+    # 错误把refresh-token当成access-token使用的情况
+    error_code = 20061
+    message = "令牌不合法"
 
 
 class ExpiredTokenException(BaseAPIException):
     error_code = 2007
-    message = "token已过期"
+    message = "令牌已过期"
 
 
 class EmailExistException(BaseAPIException):

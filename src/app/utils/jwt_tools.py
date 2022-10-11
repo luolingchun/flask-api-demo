@@ -9,7 +9,8 @@ from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_us
 
 from app.model import db
 from app.model.user import User
-from app.utils.exceptions import AuthException, InvalidTokenException, UserNotExistException, ExpiredTokenException
+from app.utils.exceptions import AuthException, InvalidTokenException, UserNotExistException, ExpiredTokenException, \
+    InvalidAccessTokenException
 
 jwt_manager = JWTManager()
 
@@ -70,20 +71,23 @@ def user_lookup_loader_callback(_, jwt_payload):
 @jwt_manager.expired_token_loader
 def expired_token_callback(jwt_headers, jwt_payload):
     """token过期处理"""
-    print(jwt_headers and jwt_payload)
+    print("expired_token_callback:", jwt_headers, jwt_payload)
     return ExpiredTokenException()
 
 
 @jwt_manager.invalid_token_loader
 def invalid_token_callback(e):
     """无效token处理"""
-    print(e)
+    print("invalid_token_callback:", e)
+    if e == "Only non-refresh tokens are allowed":
+        # 错误把refresh-token当成access-token使用的情况
+        return InvalidAccessTokenException()
     return InvalidTokenException()
 
 
 @jwt_manager.unauthorized_loader
 def unauthorized_callback(e):
-    print(e)
+    print("unauthorized_callback:", e)
     return AuthException()
 
 
