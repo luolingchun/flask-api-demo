@@ -5,7 +5,7 @@ from flask_jwt_extended import get_current_user, verify_jwt_in_request, get_jwt_
 from flask_openapi3 import APIBlueprint
 from flask_openapi3 import Tag
 
-from app.config import JWT, API_PREFIX
+from app.config import SECRET, API_PREFIX
 from app.form.user import RegisterBody, LoginBody, PasswordBody, UserInfoResponse
 from app.model import db
 from app.model.user import User, Permission
@@ -17,7 +17,7 @@ __version__ = "/v1"
 __bp__ = "/user"
 url_prefix = API_PREFIX + __version__ + __bp__
 tag = Tag(name="用户", description="用户注册、登录、个人管理")
-api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
+api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=SECRET)
 
 
 @api.post("/register")

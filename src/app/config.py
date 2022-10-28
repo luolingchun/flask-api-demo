@@ -36,12 +36,21 @@ RQ_REDIS_DB = 0
 RQ_REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{RQ_REDIS_DB}"
 # -------------------redis数据库配置-------------------
 
-# -------------------JWT-------------------
-JWT = [{"jwt": []}]
+# -------------------HTTP Basic-------------------
+
+BASIC_AUTH_USERNAME = "admin"
+BASIC_AUTH_PASSWORD = "admin123"
+# -------------------HTTP Basic-------------------
+
+SECRET = [
+    {"jwt": []},
+    {"basic": []}
+]
+# -------------------SECRET-------------------
 JWT_SECRET_KEY = "hard to guess"
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)  # 过期时间
 JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
-# -------------------JWT-------------------
+# -------------------SECRET-------------------
 
 
 # -------------------数据路径-------------------

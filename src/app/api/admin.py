@@ -6,7 +6,7 @@ from flask_openapi3 import APIBlueprint
 from flask_openapi3 import Tag
 from sqlalchemy import and_
 
-from app.config import API_PREFIX, JWT
+from app.config import API_PREFIX, SECRET
 from app.form.admin import PermissionsResponse, UsersQuery, GetUsersResponse, ModifyPasswordBody, \
     UserPath, CreateRoleBody, RolesQuery, GetRolesResponse, RolePath, UpdateRoleBody, UserRoleBody, \
     RolePermissionBody
@@ -23,7 +23,7 @@ __version__ = "/v1"
 __bp__ = "/admin"
 url_prefix = API_PREFIX + __version__ + __bp__
 tag = Tag(name="管理员", description="管理用户、角色、权限")
-api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
+api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=SECRET)
 
 
 @api.get("/permissions", responses={"200": PermissionsResponse})

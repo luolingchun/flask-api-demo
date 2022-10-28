@@ -67,7 +67,7 @@ class UserNotExistException(BaseAPIException):
 
 class PasswordException(BaseAPIException):
     error_code = 2003
-    message = "密码错误"
+    message = "用户名或密码错误"
 
 
 class ActiveException(BaseAPIException):

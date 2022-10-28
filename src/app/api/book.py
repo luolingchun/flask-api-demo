@@ -4,9 +4,10 @@
 from flask_openapi3 import APIBlueprint
 from flask_openapi3 import Tag
 
-from app.config import API_PREFIX
+from app.config import API_PREFIX, SECRET
 from app.form.book import BookBody, BookQuery
 from app.utils.enums import PermissionGroup
+from app.utils.http_basicauth import basic_required
 from app.utils.jwt_tools import role_required
 from app.utils.response import response
 
@@ -14,7 +15,7 @@ __version__ = "/v1"
 __bp__ = "/book"
 url_prefix = API_PREFIX + __version__ + __bp__
 tag = Tag(name="图书", description="图书管理")
-api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag])
+api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=SECRET)
 
 
 @api.post("")
@@ -27,6 +28,7 @@ def create_book(body: BookBody):
 
 
 @api.get("/<int:id>")
+@basic_required
 def get_book(path: BookQuery):
     """查询图书"""
     print(path)

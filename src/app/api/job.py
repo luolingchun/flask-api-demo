@@ -11,7 +11,7 @@ from rq.command import send_stop_job_command
 from rq.exceptions import InvalidJobOperation, NoSuchJobError
 from rq.job import Job, JobStatus
 
-from app.config import API_PREFIX, JWT
+from app.config import API_PREFIX, SECRET
 from app.form.job import JobQuery, JobPath, JobResponse
 from app.job import job_test
 from app.rq import rq2
@@ -25,7 +25,7 @@ __version__ = "/v1"
 __bp__ = "/job"
 url_prefix = API_PREFIX + __version__ + __bp__
 tag = Tag(name="任务", description="任务管理")
-api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=JWT)
+api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_security=SECRET)
 
 
 @api.post("")
