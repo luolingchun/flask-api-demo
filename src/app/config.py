@@ -14,6 +14,8 @@ API_PREFIX = "/api"
 JSON_AS_ASCII = False
 
 # -------------------数据库配置-------------------
+# 数据库配置：sqlite
+SQLITE_DB_URI = "sqlite:///../flask_api.db"
 # 数据库配置：postgres
 PG_USER = os.getenv("PG_USER", "postgres")
 PG_PASSWORD = os.getenv("PG_PASSWORD", "123456")
@@ -23,6 +25,7 @@ PG_PORT = os.getenv("PG_PORT", 5432)
 DB_URI = f"postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DB}"
 if not bool(int(os.getenv("DEV", 0))):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+# SQLALCHEMY_DATABASE_URI = SQLITE_DB_URI
 SQLALCHEMY_DATABASE_URI = DB_URI
 # -------------------数据库配置-------------------
 
