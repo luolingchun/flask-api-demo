@@ -10,7 +10,8 @@ from app.model import db
 
 app = create_app()
 
-migrate = Migrate(app, db)
+# compare_server_default=True
+migrate = Migrate(app, db, compare_type=True)
 
 
 @app.route("/")
