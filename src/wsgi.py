@@ -10,8 +10,18 @@ from app.model import db
 
 app = create_app()
 
+
+def include_object(_object, name, type_, reflected, compare_to):
+    if type_ == "table" and name in ["spatial_ref_sys"]:
+        return False
+    if type_ == "index" and name.endswith("_geom"):
+        return False
+
+    return True
+
+
 # compare_server_default=True
-migrate = Migrate(app, db, compare_type=True)
+migrate = Migrate(app, db, compare_type=True, include_object=include_object)
 
 
 @app.route("/")
