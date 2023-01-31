@@ -11,10 +11,10 @@ from app.model import db
 app = create_app()
 
 
-def include_object(_object, name, type_, reflected, compare_to):
-    if type_ == "table" and name in ["spatial_ref_sys"]:
+def include_object(_object, _name, _type, _reflected, _compare_to):
+    if _type == "table" and _name in ["spatial_ref_sys"]:
         return False
-    if type_ == "index" and name.endswith("_geom"):
+    if _type == "index" and _name.endswith("_geom"):
         return False
 
     return True
