@@ -5,23 +5,14 @@ from flask import redirect, url_for
 from flask.cli import click, with_appcontext
 from flask_migrate import Migrate
 
+# from geoalchemy2.alembic_helpers import include_object, render_item
 from app import create_app
 from app.model import db
 
 app = create_app()
 
-
-def include_object(_object, _name, _type, _reflected, _compare_to):
-    if _type == "table" and _name in ["spatial_ref_sys"]:
-        return False
-    if _type == "index" and _name.endswith("_geom"):
-        return False
-
-    return True
-
-
-# compare_server_default=True
-migrate = Migrate(app, db, compare_type=True, include_object=include_object)
+# compare_server_default=True include_object=include_object render_item=render_item
+migrate = Migrate(app, db, compare_type=True)
 
 
 @app.route("/")
