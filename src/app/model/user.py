@@ -159,6 +159,9 @@ class Permission(Base):
 
     roles = db.relationship("Role", secondary=role_permission, back_populates="permissions")
 
+    def __repr__(self):
+        return f"{self.name}-{self.uuid}:
+
     def data(self):
         return {
             "id": self.id,
