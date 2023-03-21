@@ -98,7 +98,7 @@ def create_app():
         doc_expansion="none",
     )
     # 使用真实IP
-    app.wsgi_app = ProxyFix(app.wsgi_app)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     # 全局配置项
     app.config.from_object(config)
     # 初始化全局异常
