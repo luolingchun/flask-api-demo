@@ -45,11 +45,14 @@ def auto_register_api(app: OpenAPI):
             api_file = os.path.join(root, file)
             rule = re.split(r"src|.py", api_file)[1]
             api_route = ".".join(rule.split(os.sep)).strip(".")
-            api = importlib.import_module(api_route)
             try:
+                api = importlib.import_module(api_route)
                 app.register_api(api.api)
             except AttributeError:
                 print(f"模块 {api_route} 中没有api变量")
+            except:
+                traceback.print_exc()
+                print(f"模块 {api_route} 自动注册错误")
 
 
 def register_apis(app: OpenAPI):
