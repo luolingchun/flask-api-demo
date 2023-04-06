@@ -100,6 +100,8 @@ def create_app():
         },
         doc_expansion="none",
     )
+    # json 正确返回中文
+    app.json.ensure_ascii = False
     # 使用真实IP
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     # 全局配置项
