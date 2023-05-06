@@ -5,7 +5,7 @@ import importlib
 import os
 import re
 import traceback
-
+from flask_cors import CORS
 from flask_openapi3 import HTTPBearer, HTTPBase
 from flask_openapi3 import Info
 from flask_openapi3 import OpenAPI
@@ -108,6 +108,8 @@ def create_app():
     app.config.from_object(config)
     # 初始化全局异常
     init_exception(app)
+    # 跨域支持
+    CORS(app)
     # 初始化JWT
     init_jwt(app)
     # 初始化数据库

@@ -4,6 +4,7 @@ Werkzeug
 Flask-JWT-Extended
 Flask-Migrate
 Flask-SQLAlchemy
+Flask-Cors
 SQLAlchemy
 pydantic
 email-validator
