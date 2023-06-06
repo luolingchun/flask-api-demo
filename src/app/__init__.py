@@ -5,8 +5,8 @@ import importlib
 import os
 import re
 import traceback
+
 from flask_cors import CORS
-from flask_openapi3 import HTTPBearer, HTTPBase
 from flask_openapi3 import Info
 from flask_openapi3 import OpenAPI
 from werkzeug.exceptions import HTTPException
@@ -95,8 +95,9 @@ def create_app():
         __name__,
         info=Info(title=config.APP_NAME, version=config.APP_VERSION),
         security_schemes={
-            "basic": HTTPBase(),
-            "jwt": HTTPBearer(bearerFormat="JWT")
+            "basic": {"type": "http", "scheme": "basic"},
+            "jwt": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
+
         },
         doc_expansion="none",
     )
