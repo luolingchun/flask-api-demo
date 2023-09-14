@@ -5,13 +5,13 @@ from flask import redirect, url_for
 from flask.cli import click, with_appcontext
 from flask_migrate import Migrate
 
-# from geoalchemy2.alembic_helpers import include_object, render_item
+# from geoalchemy2.alembic_helpers import include_object, render_item, writer
 from app import create_app
 from app.model import db
 
 app = create_app()
 
-# compare_server_default=True include_object=include_object render_item=render_item
+# compare_server_default=True,include_object=include_object,render_item=render_item,process_revision_directives=writer
 migrate = Migrate(app, db, compare_type=True)
 
 
