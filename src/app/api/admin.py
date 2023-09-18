@@ -28,7 +28,7 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_
 
 @api.get("/permissions", responses={"200": PermissionsResponse})
 @role_required(name="获取所有权限", module=PermissionGroup.PERMISSION, uuid="913aa468-634d-42d4-8a75-6d0ed16723fb")
-def get_permissions():
+def get_all_permissions():
     """获取所有权限"""
     permissions = db.session.query(Permission).all()
     data = {}
