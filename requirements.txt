@@ -12,4 +12,4 @@ python-dotenv==0.19.2
 psycopg2-binary==2.9.6
 flask_rq2==18.3
 rq==1.15.1
-redis==4.1.4
+redis==4.5.4

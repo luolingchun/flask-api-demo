@@ -45,6 +45,7 @@ def auto_register_api(app: OpenAPI):
             api_file = os.path.join(root, file)
             rule = re.split(r"src|.py", api_file)[1]
             api_route = ".".join(rule.split(os.sep)).strip(".")
+            # noinspection PyBroadException
             try:
                 api = importlib.import_module(api_route)
                 app.register_api(api.api)

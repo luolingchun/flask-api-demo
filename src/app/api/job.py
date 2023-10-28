@@ -83,14 +83,14 @@ def query_job(query: JobQuery):
         job_attributes.append({"job_id": job_id,
                                "args": job.args,
                                "kwargs": job.kwargs,
-                               "result": job.result,
+                               "result": job.return_value,
                                "enqueued_at": enqueued_at,
                                "started_at": started_at,
                                "ended_at": ended_at,
-                               "exc_info": job.exc_info,
+                               "exc_info": job.latest_result,
                                "origin": job.origin,
                                "job_status": job.get_status(),
-                               "ttl": job.get_result_ttl(),
+                               "ttl": job.result_ttl,
                                })
 
     # 按时间降序

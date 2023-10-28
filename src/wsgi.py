@@ -12,7 +12,7 @@ from app.model import db
 app = create_app()
 
 # compare_server_default=True,include_object=include_object,render_item=render_item,process_revision_directives=writer
-migrate = Migrate(app, db, compare_type=True)
+migrate = Migrate(app, db, render_as_batch=False)
 
 
 @app.route("/")

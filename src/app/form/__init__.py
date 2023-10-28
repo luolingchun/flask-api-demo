@@ -14,6 +14,10 @@ class IdModel(BaseModel):
     id: int = Field(..., description="ID")
 
 
+class IdStringModel(BaseModel):
+    id: str = Field(..., description="字符串ID")
+
+
 class FileModel(BaseModel):
     file: FileStorage
 
