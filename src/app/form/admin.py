@@ -43,10 +43,6 @@ class GetUsersResponse(JsonResponse):
     total_page: int = Field(None, description="总页数")
 
 
-class UserPath(BaseModel):
-    id: int = Field(..., description="用户ID")
-
-
 class ModifyPasswordBody(BaseModel):
     password: str = Field(..., description="密码")
     confirm_password: str = Field(..., description="验证密码")

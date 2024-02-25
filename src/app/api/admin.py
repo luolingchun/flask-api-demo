@@ -7,8 +7,9 @@ from flask_openapi3 import Tag
 from sqlalchemy import and_
 
 from app.config import API_PREFIX, JWT
+from app.form import IdModel
 from app.form.admin import PermissionsResponse, UsersQuery, GetUsersResponse, ModifyPasswordBody, \
-    UserPath, CreateRoleBody, RolesQuery, GetRolesResponse, RolePath, UpdateRoleBody, UserRoleBody, \
+    CreateRoleBody, RolesQuery, GetRolesResponse, UpdateRoleBody, UserRoleBody, \
     RolePermissionBody
 from app.form.user import RegisterBody
 from app.model import db, get_offset_limit, get_total_page, validate_name, validate_name_when_update
@@ -70,7 +71,7 @@ def get_users(query: UsersQuery):
 
 @api.put("/password/<id>")
 @role_required(name="修改用户密码", module=PermissionGroup.USER, uuid="4f0d0f12-b552-41dc-8db3-fde11fdb2405")
-def modify_user_password(path: UserPath, body: ModifyPasswordBody):
+def modify_user_password(path: IdModel, body: ModifyPasswordBody):
     """修改用户密码"""
     user = db.session.query(User).filter(and_(User.id == path.id, User.is_super.is_(False))).first()
     if user is None:
@@ -82,7 +83,7 @@ def modify_user_password(path: UserPath, body: ModifyPasswordBody):
 
 @api.delete("/users/<id>")
 @role_required(name="删除用户", module=PermissionGroup.USER, uuid="6502e822-f3da-4d42-a6de-65321b455178")
-def delete_user(path: UserPath):
+def delete_user(path: IdModel):
     """删除用户"""
     user = db.session.query(User).filter(and_(User.id == path.id, User.is_super.is_(False))).first()
     if user is None:
@@ -115,7 +116,7 @@ def get_roles(query: RolesQuery):
 
 @api.put("/roles/<id>")
 @role_required(name="更新角色", module=PermissionGroup.ROLE, uuid="cd0de18c-2147-41b6-88f8-023cef35640d")
-def update_role(path: RolePath, body: UpdateRoleBody):
+def update_role(path: IdModel, body: UpdateRoleBody):
     """更新角色"""
     role = db.session.query(Role).filter(Role.id == path.id).first()
     if role is None:
@@ -127,7 +128,7 @@ def update_role(path: RolePath, body: UpdateRoleBody):
 
 @api.delete("/roles/<int:id>")
 @role_required(name="删除角色", module="角色", uuid="cdb35c5d-f5c9-4ff5-ba6c-5bba8349a176")
-def delete_role(path: RolePath):
+def delete_role(path: IdModel):
     """删除角色"""
     role = db.session.query(Role).filter(Role.id == path.id).first()
     if role is None:
