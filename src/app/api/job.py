@@ -11,11 +11,10 @@ from rq.command import send_stop_job_command
 from rq.exceptions import InvalidJobOperation, NoSuchJobError
 from rq.job import Job, JobStatus
 
-from app.config import API_PREFIX, JWT
+from app.config import API_PREFIX, JWT, REDIS_CONNECT
 from app.form.job import JobQuery, JobPath, JobResponse
 from app.job import job_test
-from app.rq import rq2
-from app.rq.queue import default_queue
+from app.rq import default_queue
 from app.utils.enums import PermissionGroup
 from app.utils.exceptions import JobNotExistException, JobNotRetryException
 from app.utils.jwt_tools import role_required
@@ -66,7 +65,7 @@ def query_job(query: JobQuery):
         job_ids = []
     job_attributes = []
     for job_id in job_ids:
-        job = Job.fetch(job_id, connection=rq2.connection)
+        job = Job.fetch(job_id, connection=REDIS_CONNECT)
         if job.enqueued_at is not None:
             enqueued_at = (job.enqueued_at + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
         else:
@@ -109,11 +108,11 @@ def query_job(query: JobQuery):
 def del_job(path: JobPath):
     """任务删除"""
     try:
-        job = Job.fetch(path.job_id, connection=rq2.connection)
+        job = Job.fetch(path.job_id, connection=REDIS_CONNECT)
     except NoSuchJobError:
         raise JobNotExistException()
 
-    send_stop_job_command(rq2.connection, path.job_id)
+    send_stop_job_command(REDIS_CONNECT, path.job_id)
     job.delete()
     return response()
 
@@ -123,7 +122,7 @@ def del_job(path: JobPath):
 def retry_job(path: JobPath):
     """重试异步任务"""
     try:
-        job = Job.fetch(path.job_id, connection=rq2.connection)
+        job = Job.fetch(path.job_id, connection=REDIS_CONNECT)
     except NoSuchJobError:
         raise JobNotExistException()
 

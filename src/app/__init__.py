@@ -83,10 +83,10 @@ def init_db(app: OpenAPI):
     db.init_app(app)
 
 
-def init_rq2(app: OpenAPI):
+def init_rq():
     """初始化rq2"""
-    from app.rq import rq2
-    rq2.init_app(app)
+    from app.rq import init_queue
+    init_queue()
 
 
 def create_app():
@@ -116,8 +116,8 @@ def create_app():
     init_jwt(app)
     # 初始化数据库
     init_db(app)
-    # 初始化rq2
-    init_rq2(app)
+    # 初始化rq
+    init_rq()
     # 注册API蓝图
     register_apis(app)
     return app

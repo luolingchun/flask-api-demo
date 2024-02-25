@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/10/12 15:55
-from flask_rq2 import RQ
+from app.config import REDIS_CONNECT
 
-rq2 = RQ()
+default_queue = None
+
+
+def init_queue():
+    from rq import Queue
+    global default_queue
+    default_queue = Queue(name="default", connection=REDIS_CONNECT)

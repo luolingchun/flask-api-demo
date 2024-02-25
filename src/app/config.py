@@ -4,6 +4,8 @@
 import os
 from datetime import timedelta
 
+from redis import Redis
+
 # -------------------APP基础配置-------------------
 APP_NAME = "Flask API"
 APP_VERSION = "1.0.0"
@@ -35,6 +37,7 @@ REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "redis_password")
 REDIS_PORT = 6379
 RQ_REDIS_DB = 0
 RQ_REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{RQ_REDIS_DB}"
+REDIS_CONNECT = Redis.from_url(RQ_REDIS_URL)
 # -------------------redis数据库配置-------------------
 
 # -------------------HTTP Basic-------------------
