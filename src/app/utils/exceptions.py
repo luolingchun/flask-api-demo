@@ -75,7 +75,7 @@ class ActiveException(BaseAPIException):
     message = "用户未激活"
 
 
-class AuthException(BaseAPIException):
+class PermissionException(BaseAPIException):
     error_code = 2005
     message = "认证失败，没有找到令牌"
 

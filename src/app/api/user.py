@@ -4,6 +4,7 @@
 from flask_jwt_extended import get_current_user, verify_jwt_in_request, get_jwt_identity, create_access_token
 from flask_openapi3 import APIBlueprint
 from flask_openapi3 import Tag
+from sqlalchemy import select
 
 from app.config import JWT, API_PREFIX
 from app.form.user import RegisterBody, LoginBody, PasswordBody, UserInfoResponse
@@ -61,10 +62,10 @@ def modify_password(body: PasswordBody):
 @api.get("/permissions")
 @login_required
 def get_permissions():
-    """获取用户权限"""
+    """获取用户拥有的权限"""
     user = get_current_user()
     if user.is_super:
-        permissions = db.session.query(Permission).all()
+        permissions = db.session.execute(select(Permission)).scalars()
     else:
         roles = user.roles
         permissions = [permission for role in roles for permission in role.permissions]
@@ -92,7 +93,7 @@ def refresh():
     identity = get_jwt_identity()
     if identity:
         uid = identity["id"]
-        user = db.session.query(User).filter_by(id=uid).first()
+        user = db.session.execute(select(User).where(User.id == uid)).scalar()  # type: ignore
         if user is None:
             raise UserNotExistException()
         access_token = create_access_token(identity=identity)

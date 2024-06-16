@@ -10,6 +10,9 @@ from redis import Redis
 APP_NAME = "Flask API"
 APP_VERSION = "1.0.0"
 API_PREFIX = "/api"
+# Swagger UI 配置项：https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md
+SWAGGER_CONFIG = {"docExpansion": "none", "validatorUrl": None, "tryItOutEnabled": True, "filter": True,
+                  "tagsSorter": "alpha", "persistAuthorization": True}
 # -------------------APP基础配置-------------------
 
 
@@ -20,9 +23,9 @@ SQLITE_DB_URI = "sqlite:///../flask_api.db"
 PG_USER = os.getenv("PG_USER", "postgres")
 PG_PASSWORD = os.getenv("PG_PASSWORD", "123456")
 PG_DB = os.getenv("PG_DB", "flask")
-PG_HOST = os.getenv("PG_HOST", "flask-postgres")
+PG_HOST = os.getenv("PG_HOST", "flask-api-demo-postgres")
 PG_PORT = os.getenv("PG_PORT", 5432)
-DB_URI = f"postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DB}"
+DB_URI = f"postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DB}?options=-csearch_path=public"
 if not bool(int(os.getenv("DEV", 0))):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 # SQLALCHEMY_DATABASE_URI = SQLITE_DB_URI

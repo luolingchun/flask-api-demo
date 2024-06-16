@@ -4,15 +4,20 @@
 from flask import redirect, url_for
 from flask.cli import click, with_appcontext
 from flask_migrate import Migrate
+from geoalchemy2.alembic_helpers import include_object, render_item, writer
+from sqlalchemy import select
 
-# from geoalchemy2.alembic_helpers import include_object, render_item, writer
 from app import create_app
 from app.model import db
 
 app = create_app()
 
 # compare_server_default=True,include_object=include_object,render_item=render_item,process_revision_directives=writer
-migrate = Migrate(app, db, render_as_batch=False)
+migrate = Migrate(app, db, render_as_batch=False,
+                  # configure for geoalchemy2
+                  include_object=include_object,
+                  render_item=render_item,
+                  process_revision_directives=writer)
 
 
 @app.route("/")
@@ -34,9 +39,8 @@ def test(a, b):
 @with_appcontext
 def init_db():
     """初始化数据库"""
-    from app.model.user import User, Permission, Role
-    from app.utils.jwt_tools import permissions
-    user = db.session.query(User).filter(User.username == "super").first()
+    from app.model.user import User, Role
+    user = db.session.execute(select(User).where(User.username == "super")).scalar()  # type:ignore
     if user:
         print("超级管理员已存在.")
     else:
@@ -49,20 +53,7 @@ def init_db():
         db.session.commit()
         print("添加超级管理员成功.")
 
-    for name, module, uuid in permissions:
-        permission = db.session.query(Permission).filter_by(name=name).first()
-        if permission:
-            print(name, module, uuid, "is exists.")
-            continue
-        permission = Permission()
-        permission.name = name
-        permission.module = module
-        permission.uuid = uuid
-        db.session.add(permission)
-        db.session.commit()
-        print(permission.name, "is success.")
-    print("添加权限成功.")
-    role = db.session.query(Role).filter_by(name="普通用户").first()
+    role = db.session.execute(select(Role).where(Role.name == "普通用户")).scalar()  # type:ignore
     if role:
         print("普通用户角色已存在.")
     else:
@@ -83,7 +74,7 @@ def register_permission():
     from app.model.user import Permission
 
     for name, module, uuid in permissions:
-        permission = db.session.query(Permission).filter(Permission.name == name).first()
+        permission = db.session.execute(select(Permission).where(Permission.name == name)).scalar()
         if permission:
             print(f"{permission} is exists.")
             continue

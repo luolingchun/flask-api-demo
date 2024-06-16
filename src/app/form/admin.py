@@ -74,10 +74,10 @@ class UpdateRoleBody(BaseModel):
 
 
 class UserRoleBody(BaseModel):
-    id: int = Field(..., description="用户ID")
+    user_id: int = Field(..., description="用户ID")
     role_ids: Optional[List[int]] = Field([], description="角色ID列表")
 
 
 class RolePermissionBody(BaseModel):
-    id: int = Field(..., description="角色ID")
+    role_id: int = Field(..., description="角色ID")
     permission_ids: Optional[List[int]] = Field([], description="权限ID列表")

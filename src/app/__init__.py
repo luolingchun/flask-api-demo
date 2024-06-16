@@ -99,8 +99,7 @@ def create_app():
             "basic": {"type": "http", "scheme": "basic"},
             "jwt": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
 
-        },
-        doc_expansion="none",
+        }
     )
     # json 正确返回中文
     app.json.ensure_ascii = False

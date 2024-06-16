@@ -24,7 +24,7 @@ services:
       - "./:/work"
 
   flask-api-demo-postgres:
-    image: postgres:12.6
+    image: postgis/postgis:14-3.4
     container_name: flask-api-demo-postgres
     restart: always
 

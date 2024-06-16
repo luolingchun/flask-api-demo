@@ -6,11 +6,12 @@ from functools import wraps
 
 from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_user, create_access_token, \
     create_refresh_token
+from sqlalchemy import select
 
 from app.model import db
 from app.model.user import User
-from app.utils.exceptions import AuthException, InvalidTokenException, UserNotExistException, ExpiredTokenException, \
-    InvalidAccessTokenException
+from app.utils.exceptions import PermissionException, InvalidTokenException, UserNotExistException, \
+    ExpiredTokenException, InvalidAccessTokenException
 
 jwt_manager = JWTManager()
 
@@ -42,7 +43,7 @@ def role_required(name, module, uuid):
             if is_user_allowed(user, func.uuid):
                 return func(*args, **kwargs)
             else:
-                raise AuthException(message="权限不足")
+                raise PermissionException(message="权限不足")
 
         return wrapper
 
@@ -62,9 +63,9 @@ def login_required(func):
 
 @jwt_manager.user_lookup_loader
 def user_lookup_loader_callback(_, jwt_payload):
-    user = db.session.query(User).filter_by(id=jwt_payload["id"]).first()
+    user = db.session.execute(select(User).where(User.id == jwt_payload["id"])).scalar()  # type: ignore
     if user is None:
-        return UserNotExistException()
+        raise UserNotExistException()
     return user
 
 
@@ -88,7 +89,7 @@ def invalid_token_callback(e):
 @jwt_manager.unauthorized_loader
 def unauthorized_callback(e):
     print("unauthorized_callback:", e)
-    return AuthException()
+    return PermissionException()
 
 
 @jwt_manager.additional_claims_loader
