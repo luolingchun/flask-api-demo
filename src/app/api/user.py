@@ -93,7 +93,7 @@ def refresh():
     identity = get_jwt_identity()
     if identity:
         uid = identity["id"]
-        user = db.session.execute(select(User).where(User.id == uid)).scalar()  # type: ignore
+        user = db.session.execute(select(User).where(User.id == uid)).scalar()
         if user is None:
             raise UserNotExistException()
         access_token = create_access_token(identity=identity)

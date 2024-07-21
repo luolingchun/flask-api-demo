@@ -99,9 +99,9 @@ class User(Base):
 
     @classmethod
     def verify_register(cls, body: RegisterBody):
-        if db.session.execute(select(cls).where(cls.username == body.username)).scalar():  # type: ignore
+        if db.session.execute(select(cls).where(cls.username == body.username)).scalar():
             raise UserExistException(message="用户名不可用")
-        if db.session.execute(select(cls).where(cls.email == body.email)).scalar():  # type: ignore
+        if db.session.execute(select(cls).where(cls.email == body.email)).scalar():
             raise EmailExistException()
         if body.password != body.confirm_password:
             raise PasswordException(message="密码不一致")

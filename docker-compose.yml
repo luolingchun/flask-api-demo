@@ -53,5 +53,5 @@ services:
 
 networks:
   default:
-    external:
-      name: flask
+    external: true
+    name: flask

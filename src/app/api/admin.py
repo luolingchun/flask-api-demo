@@ -104,7 +104,7 @@ def create_role(body: CreateRoleBody):
 def get_roles(query: RolesQuery):
     """获取所有角色"""
     offset, limit = get_offset_limit(query.page, query.page_size)
-    roles = db.session.execute(select(Role).offset(offset).limit(limit)).scalars()
+    roles = db.session.execute(select(Role).order_by(Role.id.desc()).offset(offset).limit(limit)).scalars()
     total, total_page = get_total_page(User, [], limit)
     data = [role.data() for role in roles]
     return response(data=data, total=total, total_page=total_page)

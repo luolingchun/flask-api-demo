@@ -40,7 +40,7 @@ def test(a, b):
 def init_db():
     """初始化数据库"""
     from app.model.user import User, Role
-    user = db.session.execute(select(User).where(User.username == "super")).scalar()  # type:ignore
+    user = db.session.execute(select(User).where(User.username == "super")).scalar()
     if user:
         print("超级管理员已存在.")
     else:
@@ -53,7 +53,7 @@ def init_db():
         db.session.commit()
         print("添加超级管理员成功.")
 
-    role = db.session.execute(select(Role).where(Role.name == "普通用户")).scalar()  # type:ignore
+    role = db.session.execute(select(Role).where(Role.name == "普通用户")).scalar()
     if role:
         print("普通用户角色已存在.")
     else:

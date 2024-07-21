@@ -22,7 +22,7 @@ api = APIBlueprint(__bp__, __name__, url_prefix=url_prefix, abp_tags=[tag], abp_
 
 @api.post("", summary="创建地名")
 def create_book(body: CreatePOIBody):
-    poi = db.session.execute(select(POI).where(POI.name == body.name)).scalar()  # type: ignore
+    poi = db.session.execute(select(POI).where(POI.name == body.name)).scalar()
     if poi:
         raise ResourceExistException()
     POI.create(body)

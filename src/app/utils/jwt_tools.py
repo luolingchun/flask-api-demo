@@ -63,7 +63,7 @@ def login_required(func):
 
 @jwt_manager.user_lookup_loader
 def user_lookup_loader_callback(_, jwt_payload):
-    user = db.session.execute(select(User).where(User.id == jwt_payload["id"])).scalar()  # type: ignore
+    user = db.session.execute(select(User).where(User.id == jwt_payload["id"])).scalar()
     if user is None:
         raise UserNotExistException()
     return user

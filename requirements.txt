@@ -1,5 +1,5 @@
 Flask==3.0.3
-flask-openapi3[swagger]==4.0.0rc1
+flask-openapi3[swagger]==4.0.0rc2
 MarkupSafe==2.1.5
 Werkzeug==3.0.3
 Flask-JWT-Extended==4.6.0

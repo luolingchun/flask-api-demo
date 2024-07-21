@@ -10,6 +10,7 @@ COPY requirements.txt /tmp/requirements.txt
 
 # 基础环境安装
 RUN \
+    set -ex && \
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye main contrib non-free" > /etc/apt/sources.list && \
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-updates main contrib non-free">> /etc/apt/sources.list  && \
     echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bullseye-backports main contrib non-free">> /etc/apt/sources.list  && \
