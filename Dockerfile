@@ -32,6 +32,14 @@ RUN \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf ~/.cache/pip/*
 
+# 解决中文环境问题
+RUN apt-get update && \
+    apt-get install -y language-pack-zh-hans  && \
+    locale-gen zh_CN.UTF-8 && update-locale LANG=zh_CN.UTF-8 LC_ALL=zh_CN.UTF-8
+
+ENV LANG='zh_CN.UTF-8'
+ENV LANGUAGE='zh_CN:zh:en_US:en'
+ENV LC_ALL='zh_CN.UTF-8'
 
 # 工作空间
 WORKDIR /work/src
