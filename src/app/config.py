@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author  : llc
 # @Time    : 2020/5/4 15:57
+import json
 import os
 from datetime import timedelta
 
@@ -30,6 +31,9 @@ if not bool(int(os.getenv("DEV", 0))):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 # SQLALCHEMY_DATABASE_URI = SQLITE_DB_URI
 SQLALCHEMY_DATABASE_URI = DB_URI
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "json_serializer": lambda obj: json.dumps(obj, ensure_ascii=False)
+}
 # -------------------数据库配置-------------------
 
 
