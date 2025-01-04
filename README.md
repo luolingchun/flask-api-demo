@@ -9,7 +9,7 @@
 1. 修改`build.sh`和`docker-compose.yml`中镜像版本，执行`sh build.sh`构建镜像
 2. 执行`docker-compose up -d`启动容器
 3. 执行`docker exec -it flask-api-demo bash`进入容器
-4. 执行`supervisorctl stop app`停止服务，并执行`flask run`或`python wsgi.py`进入开发者模式
+4. 执行`supervisorctl stop webapp`停止服务，并执行`flask run`或`python wsgi.py`进入开发者模式
 5. 在`CHANGELOG.md`中记录版本日志，重新执行第一步发布镜像
 
 ## 运维调试
@@ -18,12 +18,12 @@
 
    ```bash
    # supervisorctl status
-   app                              RUNNING   pid 8, uptime 3 days, 5:35:50
+   webapp                              RUNNING   pid 8, uptime 3 days, 5:35:50
    worker                           RUNNING   pid 10, uptime 3 days, 5:35:50
    ```
    
-2. 停止进程：`supervisorctl stop app`
-3. 启动进程：`supervisorctl start app`
+2. 停止进程：`supervisorctl stop webapp`
+3. 启动进程：`supervisorctl start webapp`
 4. 查看日志：`tail -f /data/log/webapp.log`
 5. 查看日志：`tail -f /data/log/worker.log`
 
