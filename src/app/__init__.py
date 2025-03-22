@@ -43,7 +43,7 @@ def auto_register_api(app: OpenAPI):
             if not file.endswith(".py"):
                 continue
             api_file = os.path.join(root, file)
-            rule = re.split(r"src|.py", api_file)[1]
+            rule = re.split(r"src|\.py", api_file)[1]
             api_route = ".".join(rule.split(os.sep)).strip(".")
             # noinspection PyBroadException
             try:
