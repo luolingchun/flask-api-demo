@@ -1,0 +1,71 @@
+[project]
+name = "flask-api-demo"
+version = "1.0.0"
+description = "flask demo"
+requires-python = ">=3.13"
+dependencies = [
+    "Flask==3.0.3",
+    "flask-openapi3[swagger]==4.3.0",
+    "MarkupSafe==2.1.5",
+    "Werkzeug==3.0.6",
+    "Flask-JWT-Extended==4.6.0",
+    "PyJWT==2.9.0",
+    "Flask-Migrate==4.0.7",
+    "Flask-SQLAlchemy==3.1.1",
+    "Flask-Cors==6.0.0",
+    "SQLAlchemy==2.0.41",
+    "pydantic[email]==2.12.3",
+    "python-dotenv==1.0.1",
+    "psycopg2-binary==2.9.11",
+    "rq==1.16.2",
+    "redis==5.0.5",
+    "GeoAlchemy2[shapely]==0.15.1",
+]
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
+[tool.ruff]
+line-length = 120
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    ".venv",
+    "test"
+]
+
+[tool.ruff.lint]
+select = [
+    "I", # Import related rules - 处理 import 语句相关的规则，如排序、分组等
+    "E4", # Import order - 导入语句的排序问题
+    "E7", # Statement issues - 语句相关的问题，如不必要的 pass、return 等
+    "E9", # Runtime errors - 运行时错误，如语法错误等
+    "F", # Pyflakes rules - Pyflakes 检测到的问题，如未使用的变量、未定义的名称等
+    "Q", # flake8-quotes
+    "UP045", # Use X | None for type annotations
+]
