@@ -15,7 +15,7 @@ dependencies = [
     "Flask-Cors==6.0.0",
     "SQLAlchemy==2.0.41",
     "pydantic[email]==2.12.3",
-    "python-dotenv==1.0.1",
+    "python-dotenv==1.2.2",
     "psycopg2-binary==2.9.11",
     "rq==1.16.2",
     "redis==5.0.5",
