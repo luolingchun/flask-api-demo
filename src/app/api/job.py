@@ -1,18 +1,14 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/10/10 10:28
 import math
 from datetime import timedelta
 from uuid import uuid1
 
-from flask_openapi3 import APIBlueprint
-from flask_openapi3 import Tag
+from flask_openapi import APIBlueprint, Tag
 from rq.command import send_stop_job_command
 from rq.exceptions import InvalidJobOperation, NoSuchJobError
 from rq.job import Job, JobStatus
 
 from app.config import API_PREFIX, JWT, REDIS_CONNECT
-from app.form.job import JobQuery, JobPath, JobResponse
+from app.form.job import JobPath, JobQuery, JobResponse
 from app.job import job_test
 from app.rq import default_queue
 from app.utils.enums import PermissionGroup
@@ -79,18 +75,21 @@ def query_job(query: JobQuery):
         else:
             ended_at = ""
 
-        job_attributes.append({"job_id": job_id,
-                               "args": job.args,
-                               "kwargs": job.kwargs,
-                               "result": job.return_value,
-                               "enqueued_at": enqueued_at,
-                               "started_at": started_at,
-                               "ended_at": ended_at,
-                               "exc_info": job.latest_result,
-                               "origin": job.origin,
-                               "job_status": job.get_status(),
-                               "ttl": job.result_ttl,
-                               })
+        job_attributes.append(
+            {
+                "job_id": job_id,
+                "args": job.args,
+                "kwargs": job.kwargs,
+                "result": job.return_value,
+                "enqueued_at": enqueued_at,
+                "started_at": started_at,
+                "ended_at": ended_at,
+                "exc_info": job.latest_result,
+                "origin": job.origin,
+                "job_status": job.get_status(),
+                "ttl": job.result_ttl,
+            }
+        )
 
     # 按时间降序
     job_attributes = sorted(job_attributes, key=lambda k: k["ended_at"], reverse=True)
@@ -100,7 +99,7 @@ def query_job(query: JobQuery):
     total_page = math.ceil(total / page_size)
     offset = (page - 1) * page_size
 
-    return response(data=job_attributes[offset:(offset + page_size)], total=total, total_page=total_page)
+    return response(data=job_attributes[offset : (offset + page_size)], total=total, total_page=total_page)
 
 
 @api.delete("/<job_id>")

@@ -1,19 +1,25 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/17 15:24
-from flask_openapi3 import APIBlueprint
-from flask_openapi3 import Tag
+from flask_openapi import APIBlueprint, Tag
 from sqlalchemy import and_, select
 
 from app.config import API_PREFIX, JWT
 from app.form import IdModel
-from app.form.admin import PermissionsResponse, UsersQuery, GetUsersResponse, ModifyPasswordBody, CreateRoleBody, \
-    RolesQuery, GetRolesResponse, UpdateRoleBody, UserRoleBody, RolePermissionBody
+from app.form.admin import (
+    CreateRoleBody,
+    GetRolesResponse,
+    GetUsersResponse,
+    ModifyPasswordBody,
+    PermissionsResponse,
+    RolePermissionBody,
+    RolesQuery,
+    UpdateRoleBody,
+    UserRoleBody,
+    UsersQuery,
+)
 from app.form.user import RegisterBody
 from app.model import db, get_offset_limit, get_total_page, validate_name, validate_name_when_update
-from app.model.user import User, Permission, Role
+from app.model.user import Permission, Role, User
 from app.utils.enums import PermissionGroup
-from app.utils.exceptions import UserNotExistException, RoleNotExistException, ResourceConstraintException
+from app.utils.exceptions import ResourceConstraintException, RoleNotExistException, UserNotExistException
 from app.utils.jwt_tools import role_required
 from app.utils.response import response
 
@@ -156,8 +162,8 @@ def set_role_permission(body: RolePermissionBody):
     role = db.session.execute(select(Role).where(Role.id == body.role_id)).scalar()
     if role is None:
         raise RoleNotExistException()
-    role.permissions = db.session.execute(
-        select(Permission).where(Permission.id.in_(body.permission_ids))
-    ).scalars().all()
+    role.permissions = (
+        db.session.execute(select(Permission).where(Permission.id.in_(body.permission_ids))).scalars().all()
+    )
     db.session.commit()
     return response()

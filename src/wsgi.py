@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/4 15:53
 from flask import redirect, url_for
 from flask.cli import click, with_appcontext
 from flask_migrate import Migrate
@@ -13,11 +10,15 @@ from app.model import db
 app = create_app()
 
 # compare_server_default=True,include_object=include_object,render_item=render_item,process_revision_directives=writer
-migrate = Migrate(app, db, render_as_batch=False,
-                  # configure for geoalchemy2
-                  include_object=include_object,
-                  render_item=render_item,
-                  process_revision_directives=writer)
+migrate = Migrate(
+    app,
+    db,
+    render_as_batch=False,
+    # configure for geoalchemy2
+    include_object=include_object,
+    render_item=render_item,
+    process_revision_directives=writer,
+)
 
 
 @app.route("/")
@@ -39,7 +40,8 @@ def test(a, b):
 @with_appcontext
 def init_db():
     """初始化数据库"""
-    from app.model.user import User, Role
+    from app.model.user import Role, User
+
     user = db.session.execute(select(User).where(User.username == "super")).scalar()
     if user:
         print("超级管理员已存在.")
@@ -69,9 +71,9 @@ def init_db():
 @with_appcontext
 def register_permission():
     """注册权限"""
-    from app.utils.jwt_tools import permissions
     from app.model import db
     from app.model.user import Permission
+    from app.utils.jwt_tools import permissions
 
     for name, module, uuid in permissions:
         permission = db.session.execute(select(Permission).where(Permission.name == name)).scalar()
@@ -89,4 +91,4 @@ def register_permission():
 
 if __name__ == "__main__":
     # app.config["SQLALCHEMY_ECHO"] = True
-    app.run("0.0.0.0", 5000, debug=True)
+    app.run("0.0.0.0", 9000, debug=True)

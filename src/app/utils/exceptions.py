@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/5 18:54
 """
 全局异常处理
 """
+
 import json
 
 from werkzeug.exceptions import HTTPException
@@ -127,6 +125,7 @@ class RoleHasUserException(BaseAPIException):
 
 # -------------角色-------------
 
+
 # -------------文件-------------
 class ResourceNotExistException(BaseAPIException):
     error_code = 4001
@@ -144,6 +143,7 @@ class ResourceConstraintException(BaseAPIException):
 
 
 # -------------文件-------------
+
 
 # -------------任务-------------
 class JobNotExistException(BaseAPIException):
@@ -164,5 +164,6 @@ class JobTypeErrorException(BaseAPIException):
 class OneClickErrorException(BaseAPIException):
     error_code = 5004
     message = "一键任务为空"
+
 
 # -------------任务-------------

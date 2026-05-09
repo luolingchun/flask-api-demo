@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/4 17:24
 import math
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func, select, Column, and_, Integer, DateTime
+from sqlalchemy import Column, DateTime, Integer, and_, func, select
 from sqlalchemy.orm import DeclarativeBase
 
 from app.utils.exceptions import ResourceExistException
@@ -47,6 +44,7 @@ def validate_name_when_update(model, model_id, key, value, message="名称"):
 
 class Base(db.Model):
     """基础数据库模型：提供id、创建时间、更新时间"""
+
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True)
     create_time = Column(DateTime, default=datetime.now)

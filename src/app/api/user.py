@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/4 16:05
-from flask_jwt_extended import get_current_user, verify_jwt_in_request, get_jwt_identity, create_access_token
-from flask_openapi3 import APIBlueprint
-from flask_openapi3 import Tag
+from flask_jwt_extended import create_access_token, get_current_user, get_jwt_identity, verify_jwt_in_request
+from flask_openapi import APIBlueprint, Tag
 from sqlalchemy import select
 
-from app.config import JWT, API_PREFIX
-from app.form.user import RegisterBody, LoginBody, PasswordBody, UserInfoResponse
+from app.config import API_PREFIX, JWT
+from app.form.user import LoginBody, PasswordBody, RegisterBody, UserInfoResponse
 from app.model import db
-from app.model.user import User, Permission
+from app.model.user import Permission, User
 from app.utils.exceptions import RefreshException, UserNotExistException
 from app.utils.jwt_tools import get_token, login_required
 from app.utils.response import response

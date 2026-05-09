@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/4 17:11
-from typing import List, Optional
+from typing import List
 
-from pydantic import BaseModel, Field
-from pydantic import EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 from app.form import JsonResponse
 
@@ -14,7 +10,7 @@ class RegisterBody(BaseModel):
     password: str = Field(..., min_length=6, description="密码")
     confirm_password: str = Field(..., min_length=6, description="确认密码")
     email: EmailStr = Field(..., description="邮箱")
-    role_ids: Optional[List[int]] = Field([], description="角色ID列表")
+    role_ids: List[int] | None = Field([], description="角色ID列表")
 
 
 class LoginBody(BaseModel):

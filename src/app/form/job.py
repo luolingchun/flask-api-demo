@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2021/5/18 9:34
-from typing import List, Any, Dict
+from typing import Any, Dict, List
 
 from pydantic import BaseModel, Field
 from rq.job import JobStatus

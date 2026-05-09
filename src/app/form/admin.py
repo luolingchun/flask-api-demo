@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/17 15:36
-from typing import List, Dict, Optional
+from typing import Dict, List
 
 from pydantic import BaseModel, Field
 
@@ -15,7 +12,7 @@ class PermissionData(BaseModel):
 
 
 class PermissionsResponse(JsonResponse):
-    data: Optional[Dict[str, List[PermissionData]]]
+    data: Dict[str, List[PermissionData]] | None
 
 
 class UsersQuery(PageModel):
@@ -51,7 +48,7 @@ class ModifyPasswordBody(BaseModel):
 class CreateRoleBody(BaseModel):
     name: str = Field(..., description="角色名称")
     describe: str = Field(None, max_length=256, description="角色描述")
-    permission_ids: Optional[List[int]] = Field([], description="权限ID列表")
+    permission_ids: List[int] | None = Field([], description="权限ID列表")
 
 
 class RolesQuery(PageModel):
@@ -75,9 +72,9 @@ class UpdateRoleBody(BaseModel):
 
 class UserRoleBody(BaseModel):
     user_id: int = Field(..., description="用户ID")
-    role_ids: Optional[List[int]] = Field([], description="角色ID列表")
+    role_ids: List[int] | None = Field([], description="角色ID列表")
 
 
 class RolePermissionBody(BaseModel):
     role_id: int = Field(..., description="角色ID")
-    permission_ids: Optional[List[int]] = Field([], description="权限ID列表")
+    permission_ids: List[int] | None = Field([], description="权限ID列表")

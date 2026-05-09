@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2021/4/26 16:56
 import os
 
 from flask import make_response, send_file
-from flask_openapi3 import APIBlueprint
-from flask_openapi3 import Tag
+from flask_openapi import APIBlueprint, Tag
 
 from app.config import API_PREFIX, FILE_PATH
-from app.form.file import UploadFileForm, DownloadFilePath
+from app.form.file import DownloadFilePath, UploadFileForm
 from app.utils.exceptions import ResourceNotExistException
 
 __version__ = "/v1"

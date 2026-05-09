@@ -1,17 +1,23 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/16 17:27
-
 from functools import wraps
 
-from flask_jwt_extended import JWTManager, verify_jwt_in_request, get_current_user, create_access_token, \
-    create_refresh_token
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    create_refresh_token,
+    get_current_user,
+    verify_jwt_in_request,
+)
 from sqlalchemy import select
 
 from app.model import db
 from app.model.user import User
-from app.utils.exceptions import PermissionException, InvalidTokenException, UserNotExistException, \
-    ExpiredTokenException, InvalidAccessTokenException
+from app.utils.exceptions import (
+    ExpiredTokenException,
+    InvalidAccessTokenException,
+    InvalidTokenException,
+    PermissionException,
+    UserNotExistException,
+)
 
 jwt_manager = JWTManager()
 

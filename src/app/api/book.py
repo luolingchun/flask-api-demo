@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/4 16:05
-from flask_openapi3 import APIBlueprint
-from flask_openapi3 import Tag
+from flask_openapi import APIBlueprint, Tag
 
-from app.config import API_PREFIX, JWT, BASIC
+from app.config import API_PREFIX, BASIC, JWT
 from app.form.book import BookBody, BookQuery
 from app.utils.enums import PermissionGroup
 from app.utils.http_basicauth import basic_required

@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/4 15:52
 import importlib
 import os
 import re
 import traceback
 
 from flask_cors import CORS
-from flask_openapi3 import Info
-from flask_openapi3 import OpenAPI
+from flask_openapi import Info, OpenAPI
 from werkzeug.exceptions import HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -51,7 +47,7 @@ def auto_register_api(app: OpenAPI):
                 app.register_api(api.api)
             except AttributeError:
                 print(f"模块 {api_route} 中没有api变量")
-            except:
+            except:  # noqa: E722
                 traceback.print_exc()
                 print(f"模块 {api_route} 自动注册错误")
 
@@ -74,32 +70,35 @@ def register_apis(app: OpenAPI):
 def init_jwt(app: OpenAPI):
     """初始化JWT"""
     from app.utils.jwt_tools import jwt_manager
+
     jwt_manager.init_app(app)
 
 
 def init_db(app: OpenAPI):
     """初始化数据库"""
     from app.model import db
+
     db.init_app(app)
 
 
 def init_rq():
     """初始化rq2"""
     from app.rq import init_queue
+
     init_queue()
 
 
 def create_app():
     from . import config
+
     # 创建Flask实例
     app = OpenAPI(
         __name__,
         info=Info(title=config.APP_NAME, version=config.APP_VERSION),
         security_schemes={
             "basic": {"type": "http", "scheme": "basic"},
-            "jwt": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
-
-        }
+            "jwt": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"},
+        },
     )
     # json 正确返回中文
     app.json.ensure_ascii = False

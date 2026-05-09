@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/4 17:24
-
 r"""
 采用经典的权限五表设计：
 User        Role        Permission
@@ -11,33 +7,34 @@ User        Role        Permission
 User和Role为多对多关系
 Role和Permission为多对多关系
 """
-from sqlalchemy import select, String, Boolean, Text, Column, Table, Integer, ForeignKey
+
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, Text, select
 from sqlalchemy.orm import Mapped, relationship
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.form.admin import UpdateRoleBody
 from app.form.user import RegisterBody
 from app.model import Base, db
-from app.utils.exceptions import PasswordException, ActiveException, UserExistException, EmailExistException
+from app.utils.exceptions import ActiveException, EmailExistException, PasswordException, UserExistException
 
 UserRole = Table(
     "user_role",
     db.metadata,
     Column("user_id", Integer, ForeignKey("user.id")),
-    Column("role_id", Integer, ForeignKey("role.id"))
+    Column("role_id", Integer, ForeignKey("role.id")),
 )
 
 RolePermission = Table(
     "role_permission",
     db.metadata,
     Column("role_id", Integer, ForeignKey("role.id")),
-    Column("permission_id", Integer, ForeignKey("permission.id"))
+    Column("permission_id", Integer, ForeignKey("permission.id")),
 )
 
 
 class User(Base):
     __tablename__ = "user"
-    __table_args__ = ({"comment": "用户表"})
+    __table_args__ = {"comment": "用户表"}
     username = Column(String(32), unique=True, nullable=False, comment="用户名")
     fullname = Column(String(32), unique=False, nullable=False, default="", comment="姓名")
     email = Column(String(32), unique=True, nullable=True, comment="邮箱")
@@ -94,7 +91,7 @@ class User(Base):
             "fullname": self.fullname,
             "email": self.email,
             "is_active": self.is_active,
-            "roles": [role.data() for role in self.roles]
+            "roles": [role.data() for role in self.roles],
         }
 
     @classmethod
@@ -121,13 +118,14 @@ class User(Base):
 
 class Role(Base):
     __tablename__ = "role"
-    __table_args__ = ({"comment": "角色表"})
+    __table_args__ = {"comment": "角色表"}
     name = Column(String(32), unique=True, comment="角色名称")
     describe = Column(String(255), comment="角色描述")
 
     users: Mapped[list["User"]] = relationship("User", secondary=UserRole, back_populates="roles")
-    permissions: Mapped[list["Permission"]] = relationship("Permission", secondary=RolePermission,
-                                                           back_populates="roles")
+    permissions: Mapped[list["Permission"]] = relationship(
+        "Permission", secondary=RolePermission, back_populates="roles"
+    )
 
     @staticmethod
     def create(name, describe, permission_ids):
@@ -136,9 +134,9 @@ class Role(Base):
         role.describe = describe
 
         if permission_ids:
-            role.permissions = db.session.execute(
-                select(Permission).where(Permission.id.in_(permission_ids))
-            ).scalars().all()
+            role.permissions = (
+                db.session.execute(select(Permission).where(Permission.id.in_(permission_ids))).scalars().all()
+            )
         db.session.add(role)
         db.session.commit()
 
@@ -152,13 +150,13 @@ class Role(Base):
             "id": self.id,
             "name": self.name,
             "describe": self.describe,
-            "permissions": [permission.data() for permission in self.permissions]
+            "permissions": [permission.data() for permission in self.permissions],
         }
 
 
 class Permission(Base):
     __tablename__ = "permission"
-    __table_args__ = ({"comment": "权限表"})
+    __table_args__ = {"comment": "权限表"}
     name = Column(String(32), unique=True, comment="权限名称")
     module = Column(String(32), comment="权限模块")
     uuid = Column(String(255), unique=True, comment="权限uuid")
@@ -166,8 +164,4 @@ class Permission(Base):
     roles = relationship("Role", secondary=RolePermission, back_populates="permissions")
 
     def data(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "module": self.module
-        }
+        return {"id": self.id, "name": self.name, "module": self.module}

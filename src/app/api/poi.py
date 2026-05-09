@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2024/6/11 9:48
-from flask_openapi3 import APIBlueprint
-from flask_openapi3 import Tag
+from flask_openapi import APIBlueprint, Tag
 from sqlalchemy import select
 
 from app.config import API_PREFIX, JWT

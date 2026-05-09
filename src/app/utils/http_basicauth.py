@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2022/10/28 16:31
 from functools import wraps
 
 from flask import request
 
-from app.config import BASIC_AUTH_USERNAME, BASIC_AUTH_PASSWORD
+from app.config import BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME
 from app.utils.exceptions import PasswordException
 
 
@@ -16,7 +13,7 @@ def basic_required(func):
     def wrapper(*args, **kwargs):
         auth = request.authorization
         if auth:
-            is_passed = (auth.username == BASIC_AUTH_USERNAME and auth.password == BASIC_AUTH_PASSWORD)
+            is_passed = auth.username == BASIC_AUTH_USERNAME and auth.password == BASIC_AUTH_PASSWORD
         else:
             is_passed = False
         if not is_passed:

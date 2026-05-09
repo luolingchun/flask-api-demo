@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Author  : llc
-# @Time    : 2020/5/4 15:57
 import json
 import os
 from datetime import timedelta
@@ -12,8 +9,14 @@ APP_NAME = "Flask API"
 APP_VERSION = "1.0.0"
 API_PREFIX = "/api"
 # Swagger UI 配置项：https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md
-SWAGGER_CONFIG = {"docExpansion": "none", "validatorUrl": None, "tryItOutEnabled": True, "filter": True,
-                  "tagsSorter": "alpha", "persistAuthorization": True}
+SWAGGER_CONFIG = {
+    "docExpansion": "none",
+    "validatorUrl": None,
+    "tryItOutEnabled": True,
+    "filter": True,
+    "tagsSorter": "alpha",
+    "persistAuthorization": True,
+}
 # -------------------APP基础配置-------------------
 
 
@@ -31,9 +34,7 @@ if not bool(int(os.getenv("DEV", 0))):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 # SQLALCHEMY_DATABASE_URI = SQLITE_DB_URI
 SQLALCHEMY_DATABASE_URI = DB_URI
-SQLALCHEMY_ENGINE_OPTIONS = {
-    "json_serializer": lambda obj: json.dumps(obj, ensure_ascii=False)
-}
+SQLALCHEMY_ENGINE_OPTIONS = {"json_serializer": lambda obj: json.dumps(obj, ensure_ascii=False)}
 # -------------------数据库配置-------------------
 
 
